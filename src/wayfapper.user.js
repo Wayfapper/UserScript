@@ -2,7 +2,7 @@
 // @id				wayfapper
 // @name			Wayfapper
 // @category		Misc
-// @version			0.0.14
+// @version			0.0.16
 // @description		WAYFArer + mAPPER = Wayfapper
 // @namespace		https://wfp.cr4.me/
 // @downloadURL		https://wfp.cr4.me/dl/wayfapper.user.js
@@ -217,11 +217,9 @@
                         body: JSON.stringify(nomCtrl.nomList)
                     }).then(function(response) {
                         if (response.status == 222) {
-                            document.getElementById("wayfapper_id_icon").style.color = 'green';
-                            document.getElementById("wayfapper_id_text").style.color = '#FFF';
+                            document.querySelectorAll(".sidebar__item--nominations")[0].style.background = 'rgba(0, 255, 0, 0.1)';
                         } else {
-                            document.getElementById("wayfapper_id_icon").style.color = 'red';
-                            document.getElementById("wayfapper_id_text").style.color = '#FFF';
+                            document.querySelectorAll(".sidebar__item--nominations")[0].style.background = 'rgba(255, 0, 0, 0.1)';
                         }
                         console.log('[WFP]: '+response.status);
                         return response.text().then(function(text) {
@@ -261,11 +259,9 @@
                         body: JSON.stringify(jprovile)
                     }).then(function(response) {
                         if (response.status == 222) {
-                            document.getElementById("wayfapper_id_icon").style.color = 'green';
-                            document.getElementById("wayfapper_id_text").style.color = 'green';
+                            document.querySelectorAll(".sidebar__item--profile")[0].style.background = 'rgba(0, 255, 0, 0.1)';
                         } else {
-                            document.getElementById("wayfapper_id_icon").style.color = 'red';
-                            document.getElementById("wayfapper_id_text").style.color = 'red';
+                            document.querySelectorAll(".sidebar__item--profile")[0].style.background = 'rgba(255, 0, 0, 0.1)';
                         }
                         console.log('[WFP]: '+response.status);
                         return response.text().then(function(text) {
@@ -301,6 +297,13 @@
 
             span.fapper {
                font-family: Akkurat,Roboto,sans-serif;
+            }
+            .badge {
+            position: absolute;
+            padding: 5px 10px !important;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
             }`;
             const style = document.createElement('style');
             style.type = 'text/css';
@@ -308,10 +311,27 @@
             document.querySelector('head').appendChild(style);
         }
 
+        function addConfigurationSetting() {
+            var Con_Webhook = '';
+            if(WEBHOOK_TOKEN !== undefined) {
+                Con_Webhook = WEBHOOK_TOKEN;
+            }
+            const h3_set = document.createElement('h3');
+            h3_set.innerHTML = 'Wayfapper';
+            const div_set = document.createElement('div');
+            div_set.className = 'card--double-width';
+            div_set.innerHTML = '<div class="card__header card-header">'+
+                '<div><h4 class="card-header__title">Wayfapper-Token:</h4></div></div>'+
+                '<div class="card__body"><textarea class="comments-input ng-pristine ng-valid ng-empty ng-touched" placeholder="Insert Token here">'+ Con_Webhook +'</textarea></div>';
+            const h3 = document.querySelector('h3').parentNode;
+            h3.insertBefore(div_set, h3.childNodes[0]);
+            h3.insertBefore(h3_set, h3.childNodes[0]);
+        }
+
         function addConfigurationButton() {
             addCss();
 
-            const link = document.createElement('a');
+            /*const link = document.createElement('a');
             link.id = 'wayfapper_id_icon';
             link.className = 'sidebar__item sidebar-wayfapper glyphicon';
             if(WEBHOOK_TOKEN == undefined) {
@@ -335,7 +355,14 @@
                         return;
                     await GM.setValue('wayfapper-token', String(token));
                 })();
-            });
+            });*/
+
+            const badge_date = document.createElement('span');
+            badge_date.innerHTML = '&nbsp;';
+            badge_date.id = 'bage_hover';
+            badge_date.className = 'badge';
+            const badge = document.querySelector('.sidebar__item--settings span').parentNode;
+            badge.insertBefore(badge_date, badge.childNodes[0]);
         }
 
         addConfigurationButton()
@@ -361,6 +388,7 @@
                             break
                         case "settings":
                             console.log('[WFP]: ' + page[1])
+                            window.setTimeout(addConfigurationSetting,10)
                             break
                         default:
                             console.log('[WFP] unknown URL: ' + page[1])
