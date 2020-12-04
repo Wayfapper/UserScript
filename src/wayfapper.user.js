@@ -2,7 +2,7 @@
 // @id				wayfapper
 // @name			Wayfapper
 // @category		Misc
-// @version			0.0.12
+// @version			0.0.14
 // @description		WAYFArer + mAPPER = Wayfapper
 // @namespace		https://wfp.cr4.me/
 // @downloadURL		https://wfp.cr4.me/dl/wayfapper.user.js
@@ -262,10 +262,10 @@
                     }).then(function(response) {
                         if (response.status == 222) {
                             document.getElementById("wayfapper_id_icon").style.color = 'green';
-                            document.getElementById("wayfapper_id_text").style.color = '#FFF';
+                            document.getElementById("wayfapper_id_text").style.color = 'green';
                         } else {
                             document.getElementById("wayfapper_id_icon").style.color = 'red';
-                            document.getElementById("wayfapper_id_text").style.color = '#FFF';
+                            document.getElementById("wayfapper_id_text").style.color = 'red';
                         }
                         console.log('[WFP]: '+response.status);
                         return response.text().then(function(text) {
@@ -291,11 +291,11 @@
 				margin-right: 13px;
 			}
 
-			a.sidebar-item.sidebar-wayfapper {
+			a.sidebar__item.sidebar-wayfapper {
 				padding-left: 15px;
 			}
 
-			a.sidebar-item.sidebar-wayfapper:hover {
+			a.sidebar__item.sidebar-wayfapper:hover {
 				padding-left: 10px;
 			}
 
@@ -313,7 +313,7 @@
 
             const link = document.createElement('a');
             link.id = 'wayfapper_id_icon';
-            link.className = 'sidebar-item sidebar-wayfapper glyphicon';
+            link.className = 'sidebar__item sidebar-wayfapper glyphicon';
             if(WEBHOOK_TOKEN == undefined) {
                 link.className = link.className+' glyphicon-eye-close';
             }
@@ -322,9 +322,9 @@
             }
             link.title = 'Configure Wayfapper';
             link.innerHTML = '<span id="wayfapper_id_text" class="fapper">Wayfapper</span>';
-            const ref = document.querySelector('.sidebar-community').parentNode;
+            const ref = document.querySelector('.sidebar__item--community').parentNode;
 
-            ref.insertBefore(link, ref.closest('a[sidebar-item]'));
+            ref.insertBefore(link, ref.closest('a[sidebar__item]'));
 
             link.addEventListener('click', function(e) {
                 (async () => {
