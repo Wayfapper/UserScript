@@ -30,7 +30,7 @@
 (async function () {
   "use strict";
   /**
-  * Overall script parts are placed here
-  */
+   * Overall script parts are placed here
+   */
   console.log("[WFP]: init");
 })();
