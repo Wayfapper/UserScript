@@ -1,12 +1,14 @@
 // ==UserScript==
 // @name			Wayfapper
-// @version			0.0.2
-// @description		Submit wayfarerdata elsewhere
-// @author			un1matr1x
+// @version			0.0.4
+// @description		WAYFArer + mAPPER = Wayfapper
+// @namespace		https://wfp.cr4.me/
+// @downloadURL		https://wfp.cr4.me/dl/wayfapper.user.js
+// @homepageURL		https://wfp.cr4.me/
 // @match			https://wayfarer.nianticlabs.com/*
+// @author			un1matr1x
 // @grant			none
 // ==/UserScript==
-// @namespace		http://tampermonkey.net/
 
 window.onload = function(){
 	'use strict';
