@@ -1,0 +1,18 @@
+name: ci
+on: push
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 13.x, 14.x]
+    name: Lint via Node {{ matrix.node-version }}
+    steps:
+      - uses: actions/checkout@master
+      - uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - name: Pull dependencies and lint
+        run: |
+          npm ci
+          npm run lint
