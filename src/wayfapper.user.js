@@ -103,8 +103,7 @@
       dispToken = "Kein (richtiger?) Token gespeichert";
     } else {
       dispToken =
-        WEBHOOK_TOKEN.substring(0, 5) + "***" +
-        WEBHOOK_TOKEN.substring(59, 64);
+        WEBHOOK_TOKEN.substring(0, 5) + "***" + WEBHOOK_TOKEN.substring(59, 64);
     }
     const h3WfrSetting = document.createElement("h3");
     h3WfrSetting.innerHTML = "Wayfapper";
@@ -163,7 +162,7 @@
               break;
             case "settings":
               console.log("[WFP]: settings");
-              window.setTimeout(addWayfarerSetting,10);
+              window.setTimeout(addWayfarerSetting, 10);
               break;
             default:
               console.log("[WFP] unknown URL: " + page[1]);
@@ -188,7 +187,7 @@
     } else {
       document.querySelectorAll(
         ".sidebar__item--settings"
-        )[0].style.background = "rgba(220, 20, 60, 0.1)";
+      )[0].style.background = "rgba(220, 20, 60, 0.1)";
     }
   } else {
     console.log("[WFP]: pages mismatch");
