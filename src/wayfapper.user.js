@@ -134,8 +134,8 @@
               console.log("[WFP] token: empty");
             } else {
               console.log(
-                "[WFP] localstorage: " + localStorage["wayfapper-token"]);
-              
+                "[WFP] localstorage: " + localStorage["wayfapper-token"]
+              );
               GM.setValue("wayfapper-token", localStorage["wayfapper-token"]);
             }
           }
