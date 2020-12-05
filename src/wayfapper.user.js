@@ -37,7 +37,7 @@
   /**
    * Recieve the stored token, async function needed due to GM_get/set
    * @param {int} a unused param.
-   * @returns {string} The stored token.
+   * @return {string} The stored token.
    */
   async function getToken(a) {
     const token = await GM.getValue("wayfapper-token", -1);
@@ -54,9 +54,8 @@
     console.log("[WFP]: Ingress Intel-Map recognized");
     // TODO restore intel functions here
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
-    console.log('[WFP]: Wayfarer recognized');
+    console.log("[WFP]: Wayfarer recognized");
     // TODO restore wayfarer functions here
-
   } else {
     console.log("[WFP]: pages mismatch");
     console.log("[WFP]: " + window.location.href);
