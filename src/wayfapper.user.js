@@ -115,7 +115,7 @@
       '<div class="settings-item">' +
       '<div class="item-header">' +
       "<span>Wayfapper-Token</span>" +
-      '<div class="item-edit icon">' +
+      '<div class="item-edit icon" id="wfp_token_pop">' +
       "</div>" +
       "</div>" +
       '<div class="item-value ng-binding">' +
@@ -128,7 +128,17 @@
     const h3Wfr = document.querySelector("h3").parentNode;
     h3Wfr.insertBefore(divWfrSetting, h3Wfr.childNodes[0]);
     h3Wfr.insertBefore(h3WfrSetting, h3Wfr.childNodes[0]);
-    // console.log("[WFP]: Token: " + dispToken);
+
+    const wfp_token_pop = document.getElementById("wfp_token_pop");
+      wfp_token_pop.addEventListener('click', function(e) {
+        (async () => {
+          e.preventDefault();
+          const token = window.prompt('Wayfapper-Token', WEBHOOK_TOKEN);
+            if (!token)
+              return;
+            await GM.setValue('wayfapper-token', String(token));
+        })();
+      });
   }
 
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
