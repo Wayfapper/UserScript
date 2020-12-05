@@ -104,7 +104,7 @@
     addWayfarerCss();
     addWayfarerVisibles();
     // TODO restore wayfarer functions here
-    if (typeof(settings) !== "undefined" && settings["useMods"]) {
+    if (typeof settings !== "undefined" && settings["useMods"]) {
       const stats = document.querySelector("body.is-authenticated");
       if (stats !== null) {
         const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
@@ -135,15 +135,16 @@
             } else {
               console.log(
                 "[WFP] localstorage: " + localStorage["wayfapper-token"]);
+              
               GM.setValue("wayfapper-token", localStorage["wayfapper-token"]);
             }
           }
         }
       } else {
-        console.log("[WFP]: No Login - nothing to do here")
+        console.log("[WFP]: No Login - nothing to do here");
       }
     } else {
-      document.querySelectorAll(".sidebar__item--profile")[0].style.background=
+      document.querySelectorAll(".sidebar__item--profile")[0].style.background =
         "rgba(220, 20, 60, 0.1)";
     }
   } else {
