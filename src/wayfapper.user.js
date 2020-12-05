@@ -82,13 +82,13 @@
    * Add some visible representation of wayfapper to wayfarer
    */
   function addWayfarerVisibles() {
-    const badgeDate = document.createElement("span");
-    badgeDate.innerHTML = "&nbsp;";
-    badgeDate.id = "bage_hover";
-    badgeDate.className = "badge";
+    const badgeNode = document.createElement("span");
+    badgeNode.innerHTML = "&nbsp;";
+    badgeNode.id = "bage_hover";
+    badgeNode.className = "badge";
     const badge = document.querySelector(".sidebar__item--settings span")
       .parentNode;
-    badge.insertBefore(badgeDate, badge.childNodes[0]);
+    badge.insertBefore(badgeNode, badge.childNodes[0]);
   }
 
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
