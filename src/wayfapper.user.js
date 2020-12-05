@@ -46,7 +46,10 @@
 
   // define basic parameter that are used everywhere
   const WEBHOOK_URL = "https://wfp.cr4.me/api/v5/webhook.php";
-  const WEBHOOK_TOKEN = await getToken();
+  var WEBHOOK_TOKEN = await getToken();
+  if (WEBHOOK_TOKEN.length !== 64) {
+    WEBHOOK_TOKEN = -1;
+  }
 
   /**
    * Add some stylerules to wayfarer
@@ -91,6 +94,42 @@
     badge.insertBefore(badgeNode, badge.childNodes[0]);
   }
 
+  /**
+   * Add some wayfapper options to wayfarer settings
+   */
+  function addWayfarerSetting() {
+    let dispToken = "";
+    if (WEBHOOK_TOKEN == -1) {
+      dispToken = "Kein (richtiger?) Token gespeichert";
+    } else {
+      dispToken = WEBHOOK_TOKEN.substring(0, 5) + "***" +
+        WEBHOOK_TOKEN.substring(59, 64);
+    }
+    const h3WfrSetting = document.createElement("h3");
+    h3WfrSetting.innerHTML = "Wayfapper";
+    h3WfrSetting.className = "settings__breadcrumb";
+
+    const divWfrSetting = document.createElement("div");
+    divWfrSetting.className = "settings-content";
+    divWfrSetting.innerHTML = "<div class=\"settings-item\">"+
+      "<div class=\"item-header\">"+
+      "<span>Wayfapper-Token</span>"+
+      "<div class=\"item-edit icon\">"+
+      "</div>"+
+      "</div>"+
+      "<div class=\"item-value ng-binding\">"+
+      dispToken+
+      "</div>"+
+      "<div class=\"item-text additional-description\">Dein persönlicher "+
+      "Token, der dich gegenüber dem Wayfapper-Projekt ausweist"+
+      "</div>";
+
+    const h3Wfr = document.querySelector("h3").parentNode;
+    h3Wfr.insertBefore(divWfrSetting, h3Wfr.childNodes[0]);
+    h3Wfr.insertBefore(h3WfrSetting, h3Wfr.childNodes[0]);
+    // console.log("[WFP]: Token: " + dispToken);
+  }
+
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
     console.log("[WFP]: Wayfapper recognized");
     console.log("[WFP]: API: " + WEBHOOK_URL);
@@ -122,6 +161,7 @@
               break;
             case "settings":
               console.log("[WFP]: settings");
+              window.setTimeout(addWayfarerSetting,10);
               break;
             default:
               console.log("[WFP] unknown URL: " + page[1]);
