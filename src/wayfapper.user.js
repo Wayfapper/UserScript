@@ -34,30 +34,31 @@
    */
   console.log("[WFP]: init");
 
-  // Token is stored via GM_get/setValue, we need async functions here
+  /**
+   * Recieve the stored token, async function needed due to GM_get/set
+   * @param {int} a unused param.
+   * @returns {string} The stored token.
+   */
   async function getToken(a) {
-    let token = await GM.getValue("wayfapper-token", -1);
+    const token = await GM.getValue("wayfapper-token", -1);
     return token;
   }
 
-  //define basic parameter that are used everywhere
-  const WEBHOOK_URL = 'https://wfp.cr4.me/api/v5/webhook.php';
+  // define basic parameter that are used everywhere
+  const WEBHOOK_URL = "https://wfp.cr4.me/api/v5/webhook.php";
   const WEBHOOK_TOKEN = await getToken();
-
-  if (window.location.href.indexOf('wfp.cr4.me') > -1) {
-    console.log('[WFP]: Wayfapper recognized');
+  if (window.location.href.indexOf("wfp.cr4.me") > -1) {
+    console.log("[WFP]: Wayfapper recognized");
     // TODO add stuff here, later
-
-  } else if (window.location.href.indexOf('.ingress.com/intel') > -1) {
-    console.log('[WFP]: Ingress Intel-Map recognized');
+  } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
+    console.log("[WFP]: Ingress Intel-Map recognized");
     // TODO restore intel functions here
-
-  } else if (window.location.href.indexOf('wayfarer.nianticlabs.com') > -1) {
+  } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log('[WFP]: Wayfarer recognized');
     // TODO restore wayfarer functions here
 
   } else {
-    console.log('[WFP]: pages mismatch');
-    console.log('[WFP]: ' + window.location.href);
+    console.log("[WFP]: pages mismatch");
+    console.log("[WFP]: " + window.location.href);
   }
 })();
