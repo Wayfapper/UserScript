@@ -144,8 +144,9 @@
         console.log("[WFP]: No Login - nothing to do here");
       }
     } else {
-      document.querySelectorAll(".sidebar__item--settings")[0].style.background =
-        "rgba(220, 20, 60, 0.1)";
+      document.querySelectorAll(
+        ".sidebar__item--settings"
+      )[0].style.background·= "rgba(220, 20, 60, 0.1)";
     }
   } else {
     console.log("[WFP]: pages mismatch");
