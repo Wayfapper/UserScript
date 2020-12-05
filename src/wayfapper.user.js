@@ -50,8 +50,6 @@
 
   /**
    * Add some stylerules to wayfarer
-   * @param none
-   * @return none
    */
   function addWayfarerCss () {
     const css = `
@@ -82,15 +80,13 @@
 
   /**
    * Add some visible representation of wayfapper to wayfarer
-   * @param none
-   * @return none
    */
   function addWayfarerVisibles () {
-    const badge_date = document.createElement('span');
-    badge_date.innerHTML = '&nbsp;';
-    badge_date.id = 'bage_hover';
-    badge_date.className = 'badge';
-    const badge = document.querySelector('.sidebar__item--settings span').parentNode;
+    const badge_date = document.createElement("span");
+    badge_date.innerHTML = "&nbsp;";
+    badge_date.id = "bage_hover";
+    badge_date.className = "badge";
+    const badge = document.querySelector(".sidebar__item--settings span").parentNode;
     badge.insertBefore(badge_date, badge.childNodes[0]);
   }
 
