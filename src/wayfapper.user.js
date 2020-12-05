@@ -104,46 +104,47 @@
     addWayfarerCss();
     addWayfarerVisibles();
     // TODO restore wayfarer functions here
-    if ((typeof(settings) !== "undefined") && (settings["useMods"])) {
-      const stats = document.querySelector("body.is-authenticated")
-      if ( stats !== null) {
-        let rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/
-        let page = rx.exec(document.location.href)
+    if (typeof(settings) !== "undefined" && (settings["useMods"])) {
+      const stats = document.querySelector("body.is-authenticated");
+      if (stats !== null) {
+        const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
+        const page = rx.exec(document.location.href);
         if (null !== page) {
           switch (page[1]) {
             case "review":
-              console.log("[WFP]: reviews")
-              break
+              console.log("[WFP]: reviews");
+              break;
             case "profile":
-              console.log("[WFP]: profile")
-              break
+              console.log("[WFP]: profile");
+              break;
             case "nominations":
-              console.log("[WFP]: nominations")
-              break
+              console.log("[WFP]: nominations");
+              break;
             case "settings":
-              console.log("[WFP]: settings")
-              break
+              console.log("[WFP]: settings");
+              break;
             default:
-              console.log('[WFP] unknown URL: ' + page[1])
-              break
+              console.log("[WFP] unknown URL: " + page[1]);
+              break;
           }
         } else {
           // check if gm-storage is filled, else check for old data can be used
           if (WEBHOOK_TOKEN == -1) {
-            if (localStorage['wayfapper-token'] == undefined) {
-              console.log('[WFP] token: empty');
+            if (localStorage["wayfapper-token"] == undefined) {
+              console.log("[WFP] token: empty");
             } else {
-              console.log('[WFP] localstorage: '+localStorage['wayfapper-token']);
-              GM.setValue('wayfapper-token', localStorage['wayfapper-token']);
+              console.log(
+                "[WFP] localstorage: "+localStorage['wayfapper-token']);
+              GM.setValue("wayfapper-token", localStorage['wayfapper-token']);
             }
           }
         }
       } else {
-        console.log('[WFP]: No Login - nothing to do here')
+        console.log("[WFP]: No Login - nothing to do here")
       }
     } else {
-      document.querySelectorAll(".sidebar__item--profile")[0].style.background = 'rgba(220, 20, 60, 0.1)';
-      document.getElementById("wayfapper_id_icon").style.color = 'red';
+      document.querySelectorAll(".sidebar__item--profile")[0].style.background=
+        "rgba(220, 20, 60, 0.1)";
     }
   } else {
     console.log("[WFP]: pages mismatch");
