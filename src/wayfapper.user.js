@@ -51,7 +51,7 @@
   /**
    * Add some stylerules to wayfarer
    */
-  function addWayfarerCss () {
+  function addWayfarerCss() {
     const css = `
       a.glyphicon.glyphicon-share {
         margin-right: 13px;
@@ -81,12 +81,13 @@
   /**
    * Add some visible representation of wayfapper to wayfarer
    */
-  function addWayfarerVisibles () {
+  function addWayfarerVisibles() {
     const badgeDate = document.createElement("span");
     badgeDate.innerHTML = "&nbsp;";
     badgeDate.id = "bage_hover";
     badgeDate.className = "badge";
-    const badge = document.querySelector(".sidebar__item--settings span").parentNode;
+    const badge = document.querySelector(".sidebar__item--settings span")
+    .parentNode;
     badge.insertBefore(badgeDate, badge.childNodes[0]);
   }
 
