@@ -54,7 +54,7 @@
    * @return none
    */
   function addWayfarerCss () {
-    const css = "
+    const css = `
       a.glyphicon.glyphicon-share {
         margin-right: 13px;
       }
@@ -73,7 +73,7 @@
         border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.5);
         color: white;
-      }";
+      }`;
     const style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = css;
