@@ -46,7 +46,7 @@
 
   // define basic parameter that are used everywhere
   const WEBHOOK_URL = "https://wfp.cr4.me/api/v5/webhook.php";
-  var WEBHOOK_TOKEN = await getToken();
+  let WEBHOOK_TOKEN = await getToken();
   if (WEBHOOK_TOKEN.length !== 64) {
     WEBHOOK_TOKEN = -1;
   }
@@ -102,7 +102,8 @@
     if (WEBHOOK_TOKEN == -1) {
       dispToken = "Kein (richtiger?) Token gespeichert";
     } else {
-      dispToken = WEBHOOK_TOKEN.substring(0, 5) + "***" +
+      dispToken =
+        WEBHOOK_TOKEN.substring(0, 5) + "***" +
         WEBHOOK_TOKEN.substring(59, 64);
     }
     const h3WfrSetting = document.createElement("h3");
@@ -111,17 +112,18 @@
 
     const divWfrSetting = document.createElement("div");
     divWfrSetting.className = "settings-content";
-    divWfrSetting.innerHTML = "<div class=\"settings-item\">"+
-      "<div class=\"item-header\">"+
-      "<span>Wayfapper-Token</span>"+
-      "<div class=\"item-edit icon\">"+
-      "</div>"+
-      "</div>"+
-      "<div class=\"item-value ng-binding\">"+
-      dispToken+
-      "</div>"+
-      "<div class=\"item-text additional-description\">Dein persönlicher "+
-      "Token, der dich gegenüber dem Wayfapper-Projekt ausweist"+
+    divWfrSetting.innerHTML =
+      '<div class="settings-item">' +
+      '<div class="item-header">' +
+      "<span>Wayfapper-Token</span>" +
+      '<div class="item-edit icon">' +
+      "</div>" +
+      "</div>" +
+      '<div class="item-value ng-binding">' +
+      dispToken +
+      "</div>" +
+      '<div class="item-text additional-description">Dein persönlicher ' +
+      "Token, der dich gegenüber dem Wayfapper-Projekt ausweist" +
       "</div>";
 
     const h3Wfr = document.querySelector("h3").parentNode;
@@ -184,8 +186,9 @@
         console.log("[WFP]: No Login - nothing to do here");
       }
     } else {
-      document.querySelectorAll(".sidebar__item--settings")[0].style.background =
-        "rgba(220, 20, 60, 0.1)";
+      document.querySelectorAll(
+        ".sidebar__item--settings"
+        )[0].style.background = "rgba(220, 20, 60, 0.1)";
     }
   } else {
     console.log("[WFP]: pages mismatch");
