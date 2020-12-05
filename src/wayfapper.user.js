@@ -87,7 +87,7 @@
     badgeDate.id = "bage_hover";
     badgeDate.className = "badge";
     const badge = document.querySelector(".sidebar__item--settings span")
-    .parentNode;
+      .parentNode;
     badge.insertBefore(badgeDate, badge.childNodes[0]);
   }
 
