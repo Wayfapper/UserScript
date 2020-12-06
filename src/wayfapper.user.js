@@ -96,39 +96,60 @@
    */
   function sendWayfarerProfileData() {
     console.log("[WFP]: Profile waiting");
-    if (typeof(pCtrl) !== "undefined") {
+    if (typeof pCtrl !== "undefined") {
       // WF+ data object is available
       if (!pCtrl.loaded) {
         // WF+ data object isn't loaded yet, but available, retour to the start
         setTimeout(sendWayfarerProfileData, 100);
       } else {
         // WF+ data object is loaded, let's start
-        var profileStats = document.getElementById("profile-stats");
-        var jprovile = new Object();
-        jprovile.reviews = parseInt(profileStats.children[0].children[0].children[1].innerText);
-        if (settings["profExtendedStats"] == 'truth' || settings["profExtendedStats"] == "aprox") {
-          jprovile.nominations_pos = parseInt(profileStats.children[1].children[2].children[1].innerText);
-          jprovile.nominations_neg = parseInt(profileStats.children[1].children[3].children[1].innerText);
-          jprovile.dublicates =parseInt(profileStats.children[1].children[4].children[1].innerText);
+        let profileStats = document.getElementById("profile-stats");
+        let jprovile = {};
+        jprovile.reviews = parseInt(
+          profileStats.children[0].children[0].children[1].innerText
+        );
+        if (
+          settings["profExtendedStats"] == 'truth' ||
+          settings["profExtendedStats"] == "aprox"
+        ) {
+          jprovile.nominations_pos = parseInt(
+            profileStats.children[1].children[2].children[1].innerText
+          );
+          jprovile.nominations_neg = parseInt(
+            profileStats.children[1].children[3].children[1].innerText
+          );
+          jprovile.dublicates = parseInt(
+            profileStats.children[1].children[4].children[1].innerText
+          );
         } else if (settings["profExtendedStats"] == "off") {
-          jprovile.nominations_pos = parseInt(profileStats.children[1].children[1].children[1].innerText);
-          jprovile.nominations_neg = parseInt(profileStats.children[1].children[2].children[1].innerText);
-          jprovile.dublicates =parseInt(profileStats.children[1].children[3].children[1].innerText);
+          jprovile.nominations_pos = parseInt(
+            profileStats.children[1].children[1].children[1].innerText
+          );
+          jprovile.nominations_neg = parseInt(
+            profileStats.children[1].children[2].children[1].innerText
+          );
+          jprovile.dublicates = parseInt(
+            profileStats.children[1].children[3].children[1].innerText
+          );
         } else {
           return;
         }
         fetch(WEBHOOK_URL + "?&p=p&t=" + WEBHOOK_TOKEN, {
-        method: "POST",
-        body: JSON.stringify(jprovile)
-        }).then(function(response) {
+          method: "POST",
+          body: JSON.stringify(jprovile)
+        }).then(function (response) {
           if (response.status == 222) {
-            document.querySelectorAll(".sidebar__item--profile")[0].style.background = "rgba(0, 255, 0, 0.1)";
+            document.querySelectorAll(
+              ".sidebar__item--profile"
+            )[0].style.background = "rgba(0, 255, 0, 0.1)";
           } else {
-            document.querySelectorAll(".sidebar__item--profile")[0].style.background = "rgba(255, 0, 0, 0.1)";
+            document.querySelectorAll(
+              ".sidebar__item--profile"
+            )[0].style.background = "rgba(255, 0, 0, 0.1)";
           }
           console.log("[WFP]: "+response.status);
-          return response.text().then(function(text) {
-            console.log("[WFP]: "+text);
+          return response.text().then(function (text) {
+            console.log("[WFP]: " + text);
           });
         });
       }
@@ -210,7 +231,7 @@
               break;
             case "profile":
               console.log("[WFP]: profile");
-              window.setTimeout(sendWayfarerProfileData,100);
+              window.setTimeout(sendWayfarerProfileData, 100);
               break;
             case "nominations":
               console.log("[WFP]: nominations");
