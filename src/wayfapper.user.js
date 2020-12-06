@@ -10,15 +10,11 @@
 // @supportURL      https://github.com/Wayfapper/UserScript/issues
 // @include         https://wfp.cr4.me/
 // @include         https://wayfarer.nianticlabs.com/*
-// @include         http://ingress.com/intel*
-// @include         http://www.ingress.com/intel*
 // @include         https://www.ingress.com/intel*
 // @include         https://ingress.com/intel*
 // @include         https://intel.ingress.com/intel*
 // @match           https://wfp.cr4.me/
 // @match           https://wayfarer.nianticlabs.com/*
-// @match           http://ingress.com/intel*
-// @match           http://www.ingress.com/intel*
 // @match           https://www.ingress.com/intel*
 // @match           https://ingress.com/intel*
 // @match           https://intel.ingress.com/intel*
