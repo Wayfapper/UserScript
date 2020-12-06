@@ -136,7 +136,7 @@
         }
         fetch(WEBHOOK_URL + "?&p=p&t=" + WEBHOOK_TOKEN, {
           method: "POST",
-          body: JSON.stringify(jprovile);
+          body: JSON.stringify(jprovile),
         }).then(function (response) {
           if (response.status == 222) {
             document.querySelectorAll(
