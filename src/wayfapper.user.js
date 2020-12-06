@@ -176,6 +176,8 @@
           }
         } else {
           // check if gm-storage is filled, else check for old data can be used
+          // this check & conversion will be removed in version 0.2.0
+          // TODO remove @version 0.2.0
           if (WEBHOOK_TOKEN == -1) {
             if (localStorage["wayfapper-token"] == undefined) {
               console.log("[WFP] token: empty");
