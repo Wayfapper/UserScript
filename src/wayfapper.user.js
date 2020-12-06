@@ -103,13 +103,13 @@
         setTimeout(sendWayfarerProfileData, 100);
       } else {
         // WF+ data object is loaded, let's start
-        let profileStats = document.getElementById("profile-stats");
-        let jprovile = {};
+        const profileStats = document.getElementById("profile-stats");
+        const jprovile = {};
         jprovile.reviews = parseInt(
           profileStats.children[0].children[0].children[1].innerText
         );
         if (
-          settings["profExtendedStats"] == 'truth' ||
+          settings["profExtendedStats"] == "truth" ||
           settings["profExtendedStats"] == "aprox"
         ) {
           jprovile.nominations_pos = parseInt(
@@ -136,7 +136,7 @@
         }
         fetch(WEBHOOK_URL + "?&p=p&t=" + WEBHOOK_TOKEN, {
           method: "POST",
-          body: JSON.stringify(jprovile)
+          body: JSON.stringify(jprovile);
         }).then(function (response) {
           if (response.status == 222) {
             document.querySelectorAll(
@@ -147,7 +147,7 @@
               ".sidebar__item--profile"
             )[0].style.background = "rgba(255, 0, 0, 0.1)";
           }
-          console.log("[WFP]: "+response.status);
+          console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
             console.log("[WFP]: " + text);
           });
@@ -162,8 +162,8 @@
   /**
    * Add some wayfapper options to wayfarer settings
    */
-  // TODO change german language to languagekeys
   function addWayfarerSetting() {
+    // TODO change german language to languagekeys
     let dispToken = "";
     if (WEBHOOK_TOKEN == -1) {
       dispToken = "Kein (richtiger?) Token gespeichert";
