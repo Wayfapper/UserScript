@@ -92,7 +92,63 @@
   }
 
   /**
-   * Add some extract and submit data from the wayfarer profile
+   * Change wayfarer sidebare items color as feedback
+   * @param {string} sidebarItem the item for the feedback
+   * @param {string} color the indication color, default red
+   */
+  function setWayfarerFeedback(sidebarItem = "settings", color = "red") {
+    let setColor = "";
+    let setItem = "";
+    if (color == "red") {
+      setColor = "rgba(255, 0, 0, 0.1)";
+    } else if (color == "green") {
+      setColor = "rgba(0, 255, 0, 0.1)";
+    }
+    if (sidebarItem == "settings") {
+      setItem = ".sidebar__item--settings";
+    } else if (sidebarItem == "profile") {
+      setItem = ".sidebar__item--profile";
+    } else if (sidebarItem == "nominations") {
+      setItem = ".sidebar__item--nominations";
+    }
+    document.querySelectorAll(setItem)[0].style.background = setColor;
+  }
+
+  /**
+   * Extract and submit data from the wayfarer nominations
+   */
+  function sendWayfarerNominationsData() {
+    console.log("[WFP]: Nominations waiting");
+    if (typeof nomCtrl !== "undefined") {
+      // WF+ data object is available
+      if (!nomCtrl.loaded) {
+        // WF+ data object isn't loaded yet, but available, retour to the start
+        setTimeout(sendWayfarerNominationsData, 100);
+      } else {
+        // WF+ data object is loaded, let's start
+        fetch(WEBHOOK_URL + "?&p=n&t=" + WEBHOOK_TOKEN, {
+          method: "POST",
+          body: JSON.stringify(nomCtrl.nomList),
+        }).then(function (response) {
+          if (response.status == 222) {
+            setWayfarerFeedback("nominations", "green");
+          } else {
+            setWayfarerFeedback("nominations", "red");
+          }
+          console.log("[WFP]: " + response.status);
+          return response.text().then(function (text) {
+            console.log("[WFP]: " + text);
+          });
+        });
+      }
+    } else {
+      // WF+ data object isn't available, retour to the start
+      setTimeout(sendWayfarerNominationsData, 100);
+    }
+  }
+
+  /**
+   * Extract and submit data from the wayfarer profile
    */
   function sendWayfarerProfileData() {
     console.log("[WFP]: Profile waiting");
@@ -139,13 +195,9 @@
           body: JSON.stringify(jprovile),
         }).then(function (response) {
           if (response.status == 222) {
-            document.querySelectorAll(
-              ".sidebar__item--profile"
-            )[0].style.background = "rgba(0, 255, 0, 0.1)";
+            setWayfarerFeedback("profile", "green");
           } else {
-            document.querySelectorAll(
-              ".sidebar__item--profile"
-            )[0].style.background = "rgba(255, 0, 0, 0.1)";
+            setWayfarerFeedback("profile", "red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
@@ -208,8 +260,6 @@
 
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
     console.log("[WFP]: Wayfapper recognized");
-    console.log("[WFP]: API: " + WEBHOOK_URL);
-    console.log("[WFP]: Token: " + WEBHOOK_TOKEN);
     // TODO add stuff here, later
   } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
@@ -235,6 +285,7 @@
               break;
             case "nominations":
               console.log("[WFP]: nominations");
+              window.setTimeout(sendWayfarerNominationsData, 100);
               break;
             case "settings":
               console.log("[WFP]: settings");
@@ -263,9 +314,7 @@
         console.log("[WFP]: No Login - nothing to do here");
       }
     } else {
-      document.querySelectorAll(
-        ".sidebar__item--settings"
-      )[0].style.background = "rgba(220, 20, 60, 0.1)";
+      setWayfarerFeedback();
     }
   } else {
     console.log("[WFP]: pages mismatch");
