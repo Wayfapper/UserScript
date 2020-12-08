@@ -92,6 +92,27 @@
   }
 
   /**
+   * Change wayfarer sidebare items color as feedback
+   */
+  function setWayfarerFeedback(sidebarItem = "settings", color = "red") {
+    let setColor = "";
+    let setItem = "";
+    if (color == "red") {
+      setColor = "rgba(255, 0, 0, 0.1)";
+    } else if (color == "green") {
+      setColor = "rgba(0, 255, 0, 0.1)";
+    }
+    if (sidebarItem == "settings") {
+      setItem = ".sidebar__item--settings";
+    } else if (sidebarItem == "profile") {
+      setItem = ".sidebar__item--profile";
+    } else if (sidebarItem == "nominations") {
+      setItem = ".sidebar__item--nominations";
+    }
+    document.querySelectorAll(setItem)[0].style.background = setColor;
+  }
+
+  /**
    * Extract and submit data from the wayfarer nominations
    */
   function sendWayfarerNominationsData() {
@@ -108,13 +129,9 @@
           body: JSON.stringify(nomCtrl.nomList),
         }).then(function (response) {
           if (response.status == 222) {
-            document.querySelectorAll(
-              ".sidebar__item--nominations"
-            )[0].style.background = "rgba(0, 255, 0, 0.1)";
+            setWayfarerFeedback("nominations","green");
           } else {
-            document.querySelectorAll(
-              ".sidebar__item--nominations"
-            )[0].style.background = "rgba(255, 0, 0, 0.1)";
+            setWayfarerFeedback("nominations","red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
@@ -176,13 +193,9 @@
           body: JSON.stringify(jprovile),
         }).then(function (response) {
           if (response.status == 222) {
-            document.querySelectorAll(
-              ".sidebar__item--profile"
-            )[0].style.background = "rgba(0, 255, 0, 0.1)";
+            setWayfarerFeedback("profile","green");
           } else {
-            document.querySelectorAll(
-              ".sidebar__item--profile"
-            )[0].style.background = "rgba(255, 0, 0, 0.1)";
+            setWayfarerFeedback("profile","red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
