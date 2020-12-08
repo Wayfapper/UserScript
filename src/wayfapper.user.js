@@ -93,6 +93,8 @@
 
   /**
    * Change wayfarer sidebare items color as feedback
+   * @param {string} sidebarItem the item for the feedback
+   * @param {string} color the indication color, default red
    */
   function setWayfarerFeedback(sidebarItem = "settings", color = "red") {
     let setColor = "";
@@ -129,9 +131,9 @@
           body: JSON.stringify(nomCtrl.nomList),
         }).then(function (response) {
           if (response.status == 222) {
-            setWayfarerFeedback("nominations","green");
+            setWayfarerFeedback("nominations", "green");
           } else {
-            setWayfarerFeedback("nominations","red");
+            setWayfarerFeedback("nominations", "red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
@@ -193,9 +195,9 @@
           body: JSON.stringify(jprovile),
         }).then(function (response) {
           if (response.status == 222) {
-            setWayfarerFeedback("profile","green");
+            setWayfarerFeedback("profile", "green");
           } else {
-            setWayfarerFeedback("profile","red");
+            setWayfarerFeedback("profile", "red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
@@ -312,9 +314,7 @@
         console.log("[WFP]: No Login - nothing to do here");
       }
     } else {
-      document.querySelectorAll(
-        ".sidebar__item--settings"
-      )[0].style.background = "rgba(220, 20, 60, 0.1)";
+      setWayfarerFeedback();
     }
   } else {
     console.log("[WFP]: pages mismatch");
