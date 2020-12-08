@@ -94,19 +94,19 @@
   /**
    * Extract and submit data from the wayfarer nominations
    */
-  function sendWayfarerNominationsData(){
+  function sendWayfarerNominationsData() {
     console.log("[WFP]: Nominations waiting");
-    if (typeof(nomCtrl) !== "undefined") {
+    if (typeof nomCtrl !== "undefined") {
       // WF+ data object is available
-      if (!nomCtrl.loaded){
+      if (!nomCtrl.loaded) {
         // WF+ data object isn't loaded yet, but available, retour to the start
         setTimeout(sendWayfarerNominationsData, 100);
       } else {
         // WF+ data object is loaded, let's start
-        fetch(WEBHOOK_URL + "?&p=n&t="+ WEBHOOK_TOKEN, {
+        fetch(WEBHOOK_URL + "?&p=n&t=" + WEBHOOK_TOKEN, {
           method: "POST",
-          body: JSON.stringify(nomCtrl.nomList)
-        }).then(function(response) {
+          body: JSON.stringify(nomCtrl.nomList),
+        }).then(function (response) {
           if (response.status == 222) {
             document.querySelectorAll(
               ".sidebar__item--nominations"
@@ -116,9 +116,9 @@
               ".sidebar__item--nominations"
             )[0].style.background = "rgba(255, 0, 0, 0.1)";
           }
-          console.log("[WFP]: "+response.status);
-          return response.text().then(function(text) {
-            console.log("[WFP]: "+text);
+          console.log("[WFP]: " + response.status);
+          return response.text().then(function (text) {
+            console.log("[WFP]: " + text);
           });
         });
       }
