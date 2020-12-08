@@ -92,7 +92,44 @@
   }
 
   /**
-   * Add some extract and submit data from the wayfarer profile
+   * Extract and submit data from the wayfarer nominations
+   */
+  function sendWayfarerNominationsData(){
+    console.log("[WFP]: Nominations waiting");
+    if (typeof(nomCtrl) !== "undefined") {
+      // WF+ data object is available
+      if (!nomCtrl.loaded){
+        // WF+ data object isn't loaded yet, but available, retour to the start
+        setTimeout(sendWayfarerNominationsData, 100);
+      } else {
+        // WF+ data object is loaded, let's start
+        fetch(WEBHOOK_URL + "?&p=n&t="+ WEBHOOK_TOKEN, {
+          method: "POST",
+          body: JSON.stringify(nomCtrl.nomList)
+        }).then(function(response) {
+          if (response.status == 222) {
+            document.querySelectorAll(
+              ".sidebar__item--nominations"
+            )[0].style.background = "rgba(0, 255, 0, 0.1)";
+          } else {
+            document.querySelectorAll(
+              ".sidebar__item--nominations"
+            )[0].style.background = "rgba(255, 0, 0, 0.1)";
+          }
+          console.log("[WFP]: "+response.status);
+          return response.text().then(function(text) {
+            console.log("[WFP]: "+text);
+          });
+        });
+      }
+    } else {
+      // WF+ data object isn't available, retour to the start
+      setTimeout(sendWayfarerNominationsData, 100);
+    }
+  }
+
+  /**
+   * Extract and submit data from the wayfarer profile
    */
   function sendWayfarerProfileData() {
     console.log("[WFP]: Profile waiting");
@@ -208,8 +245,6 @@
 
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
     console.log("[WFP]: Wayfapper recognized");
-    console.log("[WFP]: API: " + WEBHOOK_URL);
-    console.log("[WFP]: Token: " + WEBHOOK_TOKEN);
     // TODO add stuff here, later
   } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
@@ -235,6 +270,7 @@
               break;
             case "nominations":
               console.log("[WFP]: nominations");
+              window.setTimeout(sendWayfarerNominationsData, 100);
               break;
             case "settings":
               console.log("[WFP]: settings");
