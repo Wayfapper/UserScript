@@ -261,9 +261,6 @@
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
     console.log("[WFP]: Wayfapper recognized");
     // TODO add stuff here, later
-  } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
-    console.log("[WFP]: Ingress Intel-Map recognized");
-    // TODO restore intel functions here
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log("[WFP]: Wayfarer recognized");
     addWayfarerCss();
@@ -316,6 +313,9 @@
     } else {
       setWayfarerFeedback();
     }
+  } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
+    console.log("[WFP]: Ingress Intel-Map recognized");
+    // TODO restore intel functions here
   } else {
     console.log("[WFP]: pages mismatch");
     console.log("[WFP]: " + window.location.href);
