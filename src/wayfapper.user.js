@@ -446,8 +446,8 @@
                       break;
                     case "getEntities":
                       data = JSON.parse(this.responseText);
-                      if ((
-                        data.result === undefined) ||
+                      if (
+                        data.result === undefined ||
                         data.result.map === undefined
                       ) {
                         return;
@@ -464,7 +464,7 @@
                             ent
                           ) {
                             switch (
-                            // Entity type
+                              // Entity type
                               ent[2][0]
                             ) {
                               case "p": // Portal
