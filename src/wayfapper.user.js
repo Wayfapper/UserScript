@@ -315,7 +315,189 @@
     }
   } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
-    // TODO restore intel functions here
+    const seenGuids = new Set();
+    let portals = [];
+    let inFlight = false;
+    let timerStarted = false;
+
+    /**
+     * Submit data from the intel map
+     * @param {object} data object that contains the portal infos
+     */
+    function sendIntelPortalData(data) {
+      fetch(WEBHOOK_URL + "?&p=w&t=" + WEBHOOK_TOKEN, {
+        method: "POST",
+        body: data,
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            if (response.status >= 400 && response.status <= 499) {
+              console.error("[WFP] 4xx error, not retrying", response);
+            }
+          } else {
+            inFlight = false;
+            checkIntelSend();
+          }
+        })
+        .catch(function (error) {
+          console.warn("[WFP] network error, retrying in 10 seconds", error);
+          window.setTimeout(function () {
+            sendIntelPortalData(data);
+          }, 10000);
+        });
+    }
+
+    /**
+     * Check data from the intel map
+     */
+    function checkIntelSend() {
+      if (timerStarted || inFlight) {
+        return;
+      }
+      if (Object.keys(portals).length !== 0) {
+        timerStarted = true;
+        window.setTimeout(function () {
+          timerStarted = false;
+          inFlight = true;
+          sendIntelPortalData(JSON.stringify(portals));
+          portals = [];
+        }, 3000);
+      }
+    }
+
+    /**
+     * Trim a string
+     * @param {string} str potential space spolluted string
+     * @return {string} str clean string
+     */
+    function safeIntelTrim(str) {
+      if (typeof str === "string") {
+        return str.trim();
+      } else {
+        return str;
+      }
+    }
+
+    /**
+     * Reduce PortalData to the needs
+     * @param {string} guid graphicuserinterfaceid
+     * @param {object} ent portaldata
+     * @return {object} clean portalobject
+     */
+    function IPortal(guid, ent) {
+      return [
+        // portalid
+        guid,
+        // latE6 converted to normal coordinates
+        ent[2] / 1e6,
+        // lngE6  converted to normal coordinates
+        ent[3] / 1e6,
+        // portaltitle
+        ent[8],
+        // portalimage
+        safeIntelTrim(ent[7]),
+      ];
+    }
+
+    const ingressMethodRegex = /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
+
+    (function (open, args) {
+      XMLHttpRequest.prototype.open = function () {
+        if (window.disable_portalfinder) {
+          // Testing override
+          open.apply(this, arguments);
+          return;
+        }
+
+        let apiFunc;
+        let match;
+        if ((match = arguments[1].match(ingressMethodRegex)) !== null) {
+          apiFunc = match[1];
+          let getPortalDetailsGuid;
+          if (apiFunc === "getPortalDetails") {
+            const origSend = this.send;
+            this.send = function () {
+              getPortalDetailsGuid = JSON.parse(arguments[0]).guid;
+              origSend.apply(this, arguments);
+            };
+          }
+          this.addEventListener("
+            readystatechange",
+            function () {
+              if (this.readyState === 4 && this.status === 200) {
+                try {
+                  if (
+                    this.responseText === "{}" ||
+                    this.responseText.startsWith("<!DOCTYPE html>")
+                  ) {
+                    return;
+                  }
+                  let data;
+                  switch (apiFunc) {
+                    case 'getPortalDetails':
+                      let guid = getPortalDetailsGuid;
+                      if (!seenGuids.has(guid)) {
+                        seenGuids.add(guid);
+                        data = JSON.parse(this.responseText);
+                        if (data.result === undefined) {
+                          return;
+                        }
+                        portals.push(new IPortal(guid, data.result));
+                      }
+                      break;
+                    case 'getEntities':
+                      data = JSON.parse(this.responseText);
+                      if (
+                        data.result === undefined) ||
+                        data.result.map === undefined
+                      ) {
+                       return;
+                      }
+                      for (let tile in data.result.map) {
+                        if (data.result.map.hasOwnProperty(tile)) {
+                          if (data.result.map[tile].gameEntities === undefined
+                          ) {
+                            continue;
+                          }
+                        data.result.map[tile].gameEntities.forEach(function (
+                          ent
+                        ) {
+                            // Entity type
+                            switch (ent[2][0]) {
+                              // Portal
+                              case "p":
+                                let guid = ent[0];
+                                if (!seenGuids.has(guid)) {
+                                  seenGuids.clear();
+                                  seenGuids.add(guid);
+                                  portals.push(new IPortal(guid, ent[2]));
+                                }
+                                break;
+                            }
+                          });
+                        }
+                      }
+                      break;
+                    default:
+                      return;
+                  }
+                  checkIntelSend();
+                } catch (e) {
+                  console.error(
+                    "[WFP]: Caught error in Intel XHR hook",
+                    apiFunc,
+                    e,
+                    this.responseText
+                  );
+                }
+              }
+            },
+            false
+          );
+        }
+        open.apply(this, arguments);
+      };
+    })(XMLHttpRequest.prototype.open);
   } else {
     console.log("[WFP]: pages mismatch");
     console.log("[WFP]: " + window.location.href);
