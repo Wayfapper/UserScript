@@ -420,10 +420,15 @@
               origSend.apply(this, arguments);
             };
           }
-            this.addEventListener("readystatechange", function () {
+          this.addEventListener(
+            "readystatechange",
+            function () {
               if (this.readyState === 4 && this.status === 200) {
                 try {
-                  if ((this.responseText === "{}") || (this.responseText.startsWith("<!DOCTYPE html>"))) {
+                  if (
+                    this.responseText === "{}" ||
+                    this.responseText.startsWith("<!DOCTYPE html>")
+                  ) {
                     return;
                   }
                   let data;
@@ -436,22 +441,32 @@
                         if (data.result === undefined) {
                           return;
                         }
-                      portals.push(new IPortal(guid, data.result));
+                        portals.push(new IPortal(guid, data.result));
                       }
                       break;
                     case "getEntities":
                       data = JSON.parse(this.responseText);
-                      if ((data.result === undefined) || (data.result.map === undefined)) {
+                      if ((
+                        data.result === undefined) ||
+                        data.result.map === undefined
+                      ) {
                         return;
                       }
 
                       for (const tile in data.result.map) {
                         if (data.result.map.hasOwnProperty(tile)) {
-                          if (data.result.map[tile].gameEntities === undefined) {
+                          if (
+                            data.result.map[tile].gameEntities === undefined
+                          ) {
                             continue;
                           }
-                          data.result.map[tile].gameEntities.forEach(function (ent) {
-                            switch (ent[2][0]) { // Entity type
+                          data.result.map[tile].gameEntities.forEach(function (
+                            ent
+                          ) {
+                            switch (
+                            // Entity type
+                              ent[2][0]
+                            ) {
                               case "p": // Portal
                                 const guid = ent[0];
                                 if (!seenGuids.has(guid)) {
@@ -470,7 +485,12 @@
                   }
                   checkIntelSend();
                 } catch (e) {
-                  console.error("portalfinder: Caught error in Intel XHR hook", apiFunc, e, this.responseText);
+                  console.error(
+                    "[WFP]: Caught error in Intel XHR hook",
+                    apiFunc,
+                    e,
+                    this.responseText
+                  );
                 }
               }
             },
