@@ -12,5 +12,8 @@ module.exports = {
     ecmaVersion: 2018,
     sourceType: "module",
   },
-  rules: {},
+  rules: {
+    "no-invalid-this": "off",
+    "prefer-rest-params": "off",
+  },
 };
