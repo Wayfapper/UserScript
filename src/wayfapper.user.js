@@ -414,66 +414,68 @@
           apiFunc = match[1];
           let getPortalDetailsGuid;
           if (apiFunc === "getPortalDetails") {
-            let origSend = this.send;
+            const origSend = this.send;
             this.send = function () {
               getPortalDetailsGuid = JSON.parse(arguments[0]).guid;
               origSend.apply(this, arguments);
             };
           }
-          this.addEventListener("readystatechange", function () {
-            if (this.readyState === 4 && this.status === 200) {
-              try {
-                if ((this.responseText === "{}") || (this.responseText.startsWith("<!DOCTYPE html>"))) {
-                  return;
-                }
-                let data;
-                switch (apiFunc) {
-                  case "getPortalDetails":
-                    let guid = getPortalDetailsGuid;
-                    if (!seenGuids.has(guid)) {
-                      seenGuids.add(guid);
+            this.addEventListener("readystatechange", function () {
+              if (this.readyState === 4 && this.status === 200) {
+                try {
+                  if ((this.responseText === "{}") || (this.responseText.startsWith("<!DOCTYPE html>"))) {
+                    return;
+                  }
+                  let data;
+                  switch (apiFunc) {
+                    case "getPortalDetails":
+                      const guid = getPortalDetailsGuid;
+                      if (!seenGuids.has(guid)) {
+                        seenGuids.add(guid);
+                        data = JSON.parse(this.responseText);
+                        if (data.result === undefined) {
+                          return;
+                        }
+                      portals.push(new IPortal(guid, data.result));
+                      }
+                      break;
+                    case "getEntities":
                       data = JSON.parse(this.responseText);
-                      if (data.result === undefined) {
+                      if ((data.result === undefined) || (data.result.map === undefined)) {
                         return;
                       }
-                    portals.push(new IPortal(guid, data.result));
-                    }
-                    break;
-                  case "getEntities":
-                    data = JSON.parse(this.responseText);
-                    if ((data.result === undefined) || (data.result.map === undefined)) {
-                      return;
-                    }
 
-                    for (let tile in data.result.map) {
-                      if (data.result.map.hasOwnProperty(tile)) {
-                        if (data.result.map[tile].gameEntities === undefined) {
-                          continue;
-                        }
-                        data.result.map[tile].gameEntities.forEach(function (ent) {
-                          switch (ent[2][0]) { // Entity type
-                            case "p": // Portal
-                              let guid = ent[0];
-                              if (!seenGuids.has(guid)) {
-                                seenGuids.clear();
-                                seenGuids.add(guid);
-                                portals.push(new IPortal(guid, ent[2]));
-                              }
-                              break;
+                      for (const tile in data.result.map) {
+                        if (data.result.map.hasOwnProperty(tile)) {
+                          if (data.result.map[tile].gameEntities === undefined) {
+                            continue;
                           }
-                        });
+                          data.result.map[tile].gameEntities.forEach(function (ent) {
+                            switch (ent[2][0]) { // Entity type
+                              case "p": // Portal
+                                const guid = ent[0];
+                                if (!seenGuids.has(guid)) {
+                                  seenGuids.clear();
+                                  seenGuids.add(guid);
+                                  portals.push(new IPortal(guid, ent[2]));
+                                }
+                                break;
+                            }
+                          });
+                        }
                       }
-                    }
-                    break;
-                  default:
-                    return;
+                      break;
+                    default:
+                      return;
+                  }
+                  checkIntelSend();
+                } catch (e) {
+                  console.error("portalfinder: Caught error in Intel XHR hook", apiFunc, e, this.responseText);
                 }
-                checkIntelSend();
-              } catch (e) {
-                console.error("portalfinder: Caught error in Intel XHR hook", apiFunc, e, this.responseText);
               }
-            }
-          }, false);
+            },
+            false
+          );
         }
         open.apply(this, arguments);
       };
