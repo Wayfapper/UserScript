@@ -43,10 +43,7 @@
 
   // define basic parameter that are used everywhere
   const WEBHOOK_URL = "https://wfp.cr4.me/api/v5/webhook.php";
-  let WEBHOOK_TOKEN = await getToken();
-  if (WEBHOOK_TOKEN.length !== 64) {
-    WEBHOOK_TOKEN = -1;
-  }
+  const WEBHOOK_TOKEN = await getToken();
 
   /**
    * Add some stylerules to wayfarer
@@ -217,7 +214,7 @@
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
-    if (WEBHOOK_TOKEN == -1) {
+    if (WEBHOOK_TOKEN == -1 || WEBHOOK_TOKEN.length !== 64) {
       dispToken = "Kein (richtiger?) Token gespeichert";
     } else {
       dispToken =
