@@ -315,6 +315,7 @@
     }
   } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
+
     const seenGuids = new Set();
     let portals = [];
     let inFlight = false;
@@ -399,105 +400,86 @@
       ];
     }
 
-    const ingressMethodRegex = /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
-
-    (function (open, args) {
-      XMLHttpRequest.prototype.open = function () {
-        if (window.disable_portalfinder) {
-          // Testing override
-          open.apply(this, arguments);
-          return;
-        }
-
-        let apiFunc;
-        let match;
-        if ((match = arguments[1].match(ingressMethodRegex)) !== null) {
-          apiFunc = match[1];
-          let getPortalDetailsGuid;
-          if (apiFunc === "getPortalDetails") {
-            const origSend = this.send;
-            this.send = function () {
-              getPortalDetailsGuid = JSON.parse(arguments[0]).guid;
-              origSend.apply(this, arguments);
-            };
-          }
-          this.addEventListener("
-            readystatechange",
-            function () {
-              if (this.readyState === 4 && this.status === 200) {
-                try {
-                  if (
-                    this.responseText === "{}" ||
-                    this.responseText.startsWith("<!DOCTYPE html>")
-                  ) {
+        var ingressMethodRegex = /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
+        (function (open) {
+            XMLHttpRequest.prototype.open = function () {
+                if (window.disable_portalfinder) {
+                    // Testing override
+                    open.apply(this, arguments);
                     return;
-                  }
-                  let data;
-                  switch (apiFunc) {
-                    case 'getPortalDetails':
-                      let guid = getPortalDetailsGuid;
-                      if (!seenGuids.has(guid)) {
-                        seenGuids.add(guid);
-                        data = JSON.parse(this.responseText);
-                        if (data.result === undefined) {
-                          return;
-                        }
-                        portals.push(new IPortal(guid, data.result));
-                      }
-                      break;
-                    case 'getEntities':
-                      data = JSON.parse(this.responseText);
-                      if (
-                        data.result === undefined) ||
-                        data.result.map === undefined
-                      ) {
-                       return;
-                      }
-                      for (let tile in data.result.map) {
-                        if (data.result.map.hasOwnProperty(tile)) {
-                          if (data.result.map[tile].gameEntities === undefined
-                          ) {
-                            continue;
-                          }
-                        data.result.map[tile].gameEntities.forEach(function (
-                          ent
-                        ) {
-                            // Entity type
-                            switch (ent[2][0]) {
-                              // Portal
-                              case "p":
-                                let guid = ent[0];
-                                if (!seenGuids.has(guid)) {
-                                  seenGuids.clear();
-                                  seenGuids.add(guid);
-                                  portals.push(new IPortal(guid, ent[2]));
-                                }
-                                break;
-                            }
-                          });
-                        }
-                      }
-                      break;
-                    default:
-                      return;
-                  }
-                  checkIntelSend();
-                } catch (e) {
-                  console.error(
-                    "[WFP]: Caught error in Intel XHR hook",
-                    apiFunc,
-                    e,
-                    this.responseText
-                  );
                 }
-              }
-            },
-            false
-          );
-        }
-        open.apply(this, arguments);
-      };
-    })(XMLHttpRequest.prototype.open);
+
+                var apiFunc, match;
+                if ((match = arguments[1].match(ingressMethodRegex)) !== null) {
+                    apiFunc = match[1];
+                    var getPortalDetailsGuid;
+                    if (apiFunc === 'getPortalDetails') {
+                        var origSend = this.send;
+                        this.send = function () {
+                            getPortalDetailsGuid = JSON.parse(arguments[0]).guid;
+                            origSend.apply(this, arguments);
+                        };
+                    }
+                    this.addEventListener("readystatechange", function () {
+                        if (this.readyState === 4 && this.status === 200) {
+                            try {
+                                if ((this.responseText === '{}') || (this.responseText.startsWith('<!DOCTYPE html>'))) {
+                                    return;
+                                }
+
+                                var data;
+                                switch (apiFunc) {
+                                    case 'getPortalDetails':
+                                        var guid = getPortalDetailsGuid;
+                                        if (!seenGuids.has(guid)) {
+                                            seenGuids.add(guid);
+                                            data = JSON.parse(this.responseText);
+                                            if (data.result === undefined) {
+                                                return;
+                                            }
+                                            portals.push(new IPortal(guid, data.result));
+                                        }
+                                        break;
+                                    case 'getEntities':
+                                        data = JSON.parse(this.responseText);
+                                        if ((data.result === undefined) || (data.result.map === undefined)) {
+                                            return;
+                                        }
+
+                                        for (var tile in data.result.map) {
+                                            if (data.result.map.hasOwnProperty(tile)) {
+                                                if (data.result.map[tile].gameEntities === undefined) {
+                                                    continue;
+                                                }
+
+                                                data.result.map[tile].gameEntities.forEach(function (ent) {
+                                                    switch (ent[2][0]) { // Entity type
+                                                        case 'p': // Portal
+                                                            var guid = ent[0];
+                                                            if (!seenGuids.has(guid)) {
+                                                                seenGuids.clear();
+                                                                seenGuids.add(guid);
+                                                                portals.push(new IPortal(guid, ent[2]));
+                                                            }
+                                                            break;
+                                                    }
+                                                });
+                                            }
+                                        }
+                                        break;
+                                    default:
+                                        return;
+                                }
+                                checkIntelSend();
+                            } catch (e) {
+                                console.error("portalfinder: Caught error in Intel XHR hook", apiFunc, e, this.responseText);
+                            }
+                        }
+                    }, false);
+                }
+                open.apply(this, arguments);
+            };
+        })(XMLHttpRequest.prototype.open);
   } else {
     console.log("[WFP]: pages mismatch");
     console.log("[WFP]: " + window.location.href);
