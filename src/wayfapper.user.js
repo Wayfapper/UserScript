@@ -46,6 +46,24 @@
   const WEBHOOK_TOKEN = await getToken();
 
   /**
+   * Check whether basic requirements for the token are met
+   * @param {string} str potential space spolluted string
+   * @return {boolean} true if token passes
+   */
+  function checkWebhookToken(token) {
+    const WEBHOOK_CHAR = /^[a-zA-Z0-9]+$/;
+    if (
+      token !== -1 &&
+      token.length == 64 &&
+      WEBHOOK_CHAR.test(token)
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Add some stylerules to wayfarer
    */
   function addWayfarerCss() {
@@ -214,7 +232,7 @@
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
-    if (WEBHOOK_TOKEN == -1 || WEBHOOK_TOKEN.length !== 64) {
+    if (!checkWebhookToken(WEBHOOK_TOKEN)) {
       dispToken = "Kein (richtiger?) Token gespeichert";
     } else {
       dispToken =
