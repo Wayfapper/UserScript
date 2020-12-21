@@ -46,6 +46,20 @@
   const WEBHOOK_TOKEN = await getToken();
 
   /**
+   * Check whether basic requirements for the token are met
+   * @param {string} token potential space spolluted string
+   * @return {boolean} true if token passes
+   */
+  function checkWebhookToken(token) {
+    const WEBHOOK_CHAR = /^[a-zA-Z0-9]+$/;
+    if (token !== -1 && token.length == 64 && WEBHOOK_CHAR.test(token)) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Add some stylerules to wayfarer
    */
   function addWayfarerCss() {
@@ -214,7 +228,7 @@
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
-    if (WEBHOOK_TOKEN == -1 || WEBHOOK_TOKEN.length !== 64) {
+    if (!checkWebhookToken(WEBHOOK_TOKEN)) {
       dispToken = "Kein (richtiger?) Token gespeichert";
     } else {
       dispToken =
@@ -269,25 +283,29 @@
         const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
         const page = rx.exec(document.location.href);
         if (null !== page) {
-          switch (page[1]) {
-            case "review":
-              console.log("[WFP]: reviews");
-              break;
-            case "profile":
-              console.log("[WFP]: profile");
-              window.setTimeout(sendWayfarerProfileData, 100);
-              break;
-            case "nominations":
-              console.log("[WFP]: nominations");
-              window.setTimeout(sendWayfarerNominationsData, 100);
-              break;
-            case "settings":
-              console.log("[WFP]: settings");
-              window.setTimeout(addWayfarerSetting, 10);
-              break;
-            default:
-              console.log("[WFP] unknown URL: " + page[1]);
-              break;
+          if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
+            switch (page[1]) {
+              case "review":
+                console.log("[WFP]: reviews");
+                break;
+              case "profile":
+                console.log("[WFP]: profile");
+                window.setTimeout(sendWayfarerProfileData, 100);
+                break;
+              case "nominations":
+                console.log("[WFP]: nominations");
+                window.setTimeout(sendWayfarerNominationsData, 100);
+                break;
+              case "settings":
+                console.log("[WFP]: settings");
+                window.setTimeout(addWayfarerSetting, 10);
+                break;
+              default:
+                console.log("[WFP] unknown URL: " + page[1]);
+                break;
+            }
+          } else {
+            setWayfarerFeedback();
           }
         } else {
           // check if gm-storage is filled, else check for old data can be used
@@ -323,26 +341,28 @@
      * @param {object} data object that contains the portal infos
      */
     function sendIntelPortalData(data) {
-      fetch(WEBHOOK_URL + "?&p=w&t=" + WEBHOOK_TOKEN, {
-        method: "POST",
-        body: data,
-      })
-        .then(function (response) {
-          if (!response.ok) {
-            if (response.status >= 400 && response.status <= 499) {
-              console.error("[WFP] 4xx error, not retrying", response);
-            }
-          } else {
-            inFlight = false;
-            checkIntelSend();
-          }
+      if (checkWebhookToken(WEBHOOK_TOKEN)) {
+        fetch(WEBHOOK_URL + "?&p=w&t=" + WEBHOOK_TOKEN, {
+          method: "POST",
+          body: data,
         })
-        .catch(function (error) {
-          console.warn("[WFP] network error, retrying in 10 seconds", error);
-          window.setTimeout(function () {
-            sendIntelPortalData(data);
-          }, 10000);
-        });
+          .then(function (response) {
+            if (!response.ok) {
+              if (response.status >= 400 && response.status <= 499) {
+                console.error("[WFP] 4xx error, not retrying", response);
+              }
+            } else {
+              inFlight = false;
+              checkIntelSend();
+            }
+          })
+          .catch(function (error) {
+            console.warn("[WFP] network error, retrying in 10 seconds", error);
+            window.setTimeout(function () {
+              sendIntelPortalData(data);
+            }, 10000);
+          });
+      }
     }
 
     /**
