@@ -47,16 +47,12 @@
 
   /**
    * Check whether basic requirements for the token are met
-   * @param {string} str potential space spolluted string
+   * @param {string} token potential space spolluted string
    * @return {boolean} true if token passes
    */
   function checkWebhookToken(token) {
     const WEBHOOK_CHAR = /^[a-zA-Z0-9]+$/;
-    if (
-      token !== -1 &&
-      token.length == 64 &&
-      WEBHOOK_CHAR.test(token)
-    ) {
+    if (token !== -1 && token.length == 64 && WEBHOOK_CHAR.test(token)) {
       return true;
     } else {
       return false;
