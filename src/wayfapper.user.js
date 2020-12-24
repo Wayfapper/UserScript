@@ -107,7 +107,7 @@
    * @param {string} sidebarItem the item for the feedback
    * @param {string} color the indication color, default red
    */
-  function setWayfarerFeedback(sidebarItem = "settings", color = "red") {
+  function setWayfarerFeedback(sidebarItem = "s", color = "red") {
     let setColor = "";
     let setItem = "";
     if (color == "red") {
@@ -115,11 +115,11 @@
     } else if (color == "green") {
       setColor = "rgba(0, 255, 0, 0.1)";
     }
-    if (sidebarItem == "settings") {
+    if (sidebarItem == "s") {
       setItem = ".sidebar__item--settings";
-    } else if (sidebarItem == "profile") {
+    } else if (sidebarItem == "p") {
       setItem = ".sidebar__item--profile";
-    } else if (sidebarItem == "nominations") {
+    } else if (sidebarItem == "n") {
       setItem = ".sidebar__item--nominations";
     }
     document.querySelectorAll(setItem)[0].style.background = setColor;
@@ -142,9 +142,9 @@
           body: JSON.stringify(nomCtrl.nomList),
         }).then(function (response) {
           if (response.status == 222) {
-            setWayfarerFeedback("nominations", "green");
+            setWayfarerFeedback("n", "green");
           } else {
-            setWayfarerFeedback("nominations", "red");
+            setWayfarerFeedback("n", "red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
@@ -206,9 +206,9 @@
           body: JSON.stringify(jprovile),
         }).then(function (response) {
           if (response.status == 222) {
-            setWayfarerFeedback("profile", "green");
+            setWayfarerFeedback("p", "green");
           } else {
-            setWayfarerFeedback("profile", "red");
+            setWayfarerFeedback("p", "red");
           }
           console.log("[WFP]: " + response.status);
           return response.text().then(function (text) {
@@ -305,7 +305,7 @@
                 break;
             }
           } else {
-            setWayfarerFeedback();
+            setWayfarerFeedback("s", "red");
           }
         } else {
           // check if gm-storage is filled, else check for old data can be used
@@ -326,7 +326,7 @@
         console.log("[WFP]: No Login - nothing to do here");
       }
     } else {
-      setWayfarerFeedback();
+      setWayfarerFeedback("s", "red");
     }
   } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
