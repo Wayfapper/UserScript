@@ -110,17 +110,26 @@
   function setWayfarerFeedback(sidebarItem = "s", color = "red") {
     let setColor = "";
     let setItem = "";
-    if (color == "red") {
-      setColor = "rgba(255, 0, 0, 0.1)";
-    } else if (color == "green") {
-      setColor = "rgba(0, 255, 0, 0.1)";
+    switch (sidebarItem) {
+      case "p":
+        setItem = ".sidebar__item--profile";
+        break;
+      case "n":
+        setItem = ".sidebar__item--nominations";
+        break;
+      case "s":
+      default:
+        setItem = ".sidebar__item--settings";
+        break;
     }
-    if (sidebarItem == "s") {
-      setItem = ".sidebar__item--settings";
-    } else if (sidebarItem == "p") {
-      setItem = ".sidebar__item--profile";
-    } else if (sidebarItem == "n") {
-      setItem = ".sidebar__item--nominations";
+    switch (color) {
+      case "green":
+        setColor = "rgba(0, 255, 0, 0.1)";
+        break;
+      case "red":
+      default:
+        setColor = "rgba(255, 0, 0, 0.1)";
+        break;
     }
     document.querySelectorAll(setItem)[0].style.background = setColor;
   }
