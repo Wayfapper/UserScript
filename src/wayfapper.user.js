@@ -126,6 +126,28 @@
   }
 
   /**
+   * Change wayfarer sidebare items color as feedback
+   * @param {string} data object with the informations
+   * @param {string} page target to submit the data
+   */
+  function sendDataToWayfapper(data, page = "s") {
+    fetch(WEBHOOK_URL + "?&p=" + page + "&t=" + WEBHOOK_TOKEN, {
+      method: "POST",
+      body: JSON.stringify(data),
+    }).then(function (response) {
+      if (response.status == 222) {
+        setWayfarerFeedback(page, "green");
+      } else {
+        setWayfarerFeedback(page, "red");
+      }
+      console.log("[WFP]: " + response.status);
+      return response.text().then(function (text) {
+        console.log("[WFP]: " + text);
+      });
+    });
+  }
+
+  /**
    * Extract and submit data from the wayfarer nominations
    */
   function sendWayfarerNominationsData() {
@@ -137,20 +159,7 @@
         setTimeout(sendWayfarerNominationsData, 100);
       } else {
         // WF+ data object is loaded, let's start
-        fetch(WEBHOOK_URL + "?&p=n&t=" + WEBHOOK_TOKEN, {
-          method: "POST",
-          body: JSON.stringify(nomCtrl.nomList),
-        }).then(function (response) {
-          if (response.status == 222) {
-            setWayfarerFeedback("n", "green");
-          } else {
-            setWayfarerFeedback("n", "red");
-          }
-          console.log("[WFP]: " + response.status);
-          return response.text().then(function (text) {
-            console.log("[WFP]: " + text);
-          });
-        });
+        sendDataToWayfapper(nomCtrl.nomList, "n");
       }
     } else {
       // WF+ data object isn't available, retour to the start
@@ -201,20 +210,7 @@
         } else {
           return;
         }
-        fetch(WEBHOOK_URL + "?&p=p&t=" + WEBHOOK_TOKEN, {
-          method: "POST",
-          body: JSON.stringify(jprovile),
-        }).then(function (response) {
-          if (response.status == 222) {
-            setWayfarerFeedback("p", "green");
-          } else {
-            setWayfarerFeedback("p", "red");
-          }
-          console.log("[WFP]: " + response.status);
-          return response.text().then(function (text) {
-            console.log("[WFP]: " + text);
-          });
-        });
+        sendDataToWayfapper(jprovile, "p");
       }
     } else {
       // WF+ data object isn't available, retour to the start
