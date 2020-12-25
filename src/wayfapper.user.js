@@ -131,7 +131,9 @@
         setColor = "rgba(255, 0, 0, 0.1)";
         break;
     }
-    document.querySelectorAll(setItem)[0].style.background = setColor;
+    document
+      .querySelectorAll(setItem)[0]
+      .setAttribute("style", "background-color :" + setColor + " !important");
   }
 
   /**
