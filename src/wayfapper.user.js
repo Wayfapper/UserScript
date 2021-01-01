@@ -283,7 +283,6 @@
     console.log("[WFP]: Wayfarer recognized");
     addWayfarerCss();
     addWayfarerVisibles();
-    // TODO restore wayfarer functions here
     if (typeof settings !== "undefined" && settings["useMods"]) {
       const stats = document.querySelector("body.is-authenticated");
       if (stats !== null) {
