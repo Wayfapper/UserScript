@@ -150,6 +150,25 @@
   }
 
   /**
+   * Check, if we should allow another trasmission to wayfapper
+   * @param {string} page where the trasmissions came from for the check
+   * @param {inti} time min passed duraction since last successfull transmition
+   * @return {boolean} true if time since last transmission is allready passed
+   */
+  function checkWayfarerLastTransmit(page, time = 30) {
+    let timestamp = 0;
+    if (localStorage["[WFP]_" + page]) {
+      timestamp = parseInt(localStorage["[WFP]_" + page]);
+    }
+    if (Date.now() > time * 60 * 1000 + timestamp) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+
+  /**
    * Change wayfarer sidebare items color as feedback
    * @param {string} data object with the informations
    * @param {string} page target to submit the data
@@ -176,18 +195,22 @@
    */
   function sendWayfarerNominationsData() {
     console.log("[WFP]: Nominations waiting");
-    if (typeof nomCtrl !== "undefined") {
-      // WF+ data object is available
-      if (!nomCtrl.loaded) {
-        // WF+ data object isn't loaded yet, but available, retour to the start
-        setTimeout(sendWayfarerNominationsData, 100);
+    if (checkWayfarerLastTransmit("n", 20)) {
+      if (typeof nomCtrl !== "undefined") {
+        // WF+ data object is available
+        if (!nomCtrl.loaded) {
+          // WF+ data object isn't loaded yet, but available, retour to the start
+          setTimeout(sendWayfarerNominationsData, 100);
+        } else {
+          // WF+ data object is loaded, let's start
+          sendDataToWayfapper(nomCtrl.nomList, "n");
+        }
       } else {
-        // WF+ data object is loaded, let's start
-        sendDataToWayfapper(nomCtrl.nomList, "n");
+        // WF+ data object isn't available, retour to the start
+        setTimeout(sendWayfarerNominationsData, 100);
       }
     } else {
-      // WF+ data object isn't available, retour to the start
-      setTimeout(sendWayfarerNominationsData, 100);
+      setWayfarerFeedback("n", "yellow");
     }
   }
 
@@ -196,49 +219,53 @@
    */
   function sendWayfarerProfileData() {
     console.log("[WFP]: Profile waiting");
-    if (typeof pCtrl !== "undefined") {
-      // WF+ data object is available
-      if (!pCtrl.loaded) {
-        // WF+ data object isn't loaded yet, but available, retour to the start
-        setTimeout(sendWayfarerProfileData, 100);
-      } else {
-        // WF+ data object is loaded, let's start
-        const profileStats = document.getElementById("profile-stats");
-        const jprovile = {};
-        jprovile.reviews = parseInt(
-          profileStats.children[0].children[0].children[1].innerText
-        );
-        if (
-          settings["profExtendedStats"] == "truth" ||
-          settings["profExtendedStats"] == "aprox"
-        ) {
-          jprovile.nominations_pos = parseInt(
-            profileStats.children[1].children[2].children[1].innerText
-          );
-          jprovile.nominations_neg = parseInt(
-            profileStats.children[1].children[3].children[1].innerText
-          );
-          jprovile.dublicates = parseInt(
-            profileStats.children[1].children[4].children[1].innerText
-          );
-        } else if (settings["profExtendedStats"] == "off") {
-          jprovile.nominations_pos = parseInt(
-            profileStats.children[1].children[1].children[1].innerText
-          );
-          jprovile.nominations_neg = parseInt(
-            profileStats.children[1].children[2].children[1].innerText
-          );
-          jprovile.dublicates = parseInt(
-            profileStats.children[1].children[3].children[1].innerText
-          );
+    if (checkWayfarerLastTransmit("p", 5)) {
+      if (typeof pCtrl !== "undefined") {
+        // WF+ data object is available
+        if (!pCtrl.loaded) {
+          // WF+ data object isn't loaded yet, but available, retour to the start
+          setTimeout(sendWayfarerProfileData, 100);
         } else {
-          return;
+          // WF+ data object is loaded, let's start
+          const profileStats = document.getElementById("profile-stats");
+          const jprovile = {};
+          jprovile.reviews = parseInt(
+            profileStats.children[0].children[0].children[1].innerText
+          );
+          if (
+            settings["profExtendedStats"] == "truth" ||
+            settings["profExtendedStats"] == "aprox"
+          ) {
+            jprovile.nominations_pos = parseInt(
+              profileStats.children[1].children[2].children[1].innerText
+            );
+            jprovile.nominations_neg = parseInt(
+              profileStats.children[1].children[3].children[1].innerText
+            );
+            jprovile.dublicates = parseInt(
+              profileStats.children[1].children[4].children[1].innerText
+            );
+          } else if (settings["profExtendedStats"] == "off") {
+            jprovile.nominations_pos = parseInt(
+              profileStats.children[1].children[1].children[1].innerText
+            );
+            jprovile.nominations_neg = parseInt(
+              profileStats.children[1].children[2].children[1].innerText
+            );
+            jprovile.dublicates = parseInt(
+              profileStats.children[1].children[3].children[1].innerText
+            );
+          } else {
+            return;
+          }
+          sendDataToWayfapper(jprovile, "p");
         }
-        sendDataToWayfapper(jprovile, "p");
+      } else {
+        // WF+ data object isn't available, retour to the start
+        setTimeout(sendWayfarerProfileData, 100);
       }
     } else {
-      // WF+ data object isn't available, retour to the start
-      setTimeout(sendWayfarerProfileData, 100);
+      setWayfarerFeedback("p", "yellow");
     }
   }
 
@@ -299,7 +326,6 @@
       addWayfarerVisibles();
       const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
       const page = rx.exec(document.location.href);
-      console.log(Date.now());
       if (null !== page) {
         if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
           switch (page[1]) {
