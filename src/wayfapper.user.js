@@ -167,7 +167,6 @@
     }
   }
 
-
   /**
    * Change wayfarer sidebare items color as feedback
    * @param {string} data object with the informations
