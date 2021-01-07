@@ -46,6 +46,15 @@
   const WEBHOOK_TOKEN = await getToken();
 
   /**
+   * Stop this script for a defined time
+   * @param {init} milliseconds time to wait
+   * @return {object} Promise if time has passed
+   */
+  function Sleep(milliseconds) {
+   return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+
+  /**
    * Check whether basic requirements for the token are met
    * @param {string} token potential space spolluted string
    * @return {boolean} true if token passes
@@ -276,6 +285,77 @@
     });
   }
 
+  /**
+   * Select what should happen, when wayfarer is detected
+   */
+  function wayfarerMainFunction() {
+    const stats = document.querySelector("body.is-authenticated");
+    if (stats !== null) {
+      const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
+      const page = rx.exec(document.location.href);
+      if (null !== page) {
+        if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
+          switch (page[1]) {
+            case "review":
+              console.log("[WFP]: reviews");
+              break;
+            case "profile":
+              console.log("[WFP]: profile");
+              window.setTimeout(sendWayfarerProfileData, 100);
+              break;
+            case "nominations":
+              console.log("[WFP]: nominations");
+              window.setTimeout(sendWayfarerNominationsData, 100);
+              break;
+            case "settings":
+              console.log("[WFP]: settings");
+              window.setTimeout(addWayfarerSetting, 10);
+              break;
+            default:
+              console.log("[WFP] unknown URL: " + page[1]);
+              break;
+          }
+        } else {
+          setWayfarerFeedback("s", "red");
+        }
+      } else {
+        // check if gm-storage is filled, else check for old data can be used
+        // this check & conversion will be removed in version 0.2.0
+        // TODO remove @version 0.2.0
+        if (WEBHOOK_TOKEN == -1) {
+          if (localStorage["wayfapper-token"] == undefined) {
+            console.log("[WFP] token: empty");
+          } else {
+            console.log(
+              "[WFP] localstorage: " + localStorage["wayfapper-token"]
+            );
+            GM.setValue("wayfapper-token", localStorage["wayfapper-token"]);
+          }
+        }
+      }
+    } else {
+      console.log("[WFP]: No Login - nothing to do here");
+    }
+  }
+
+  /**
+   * ReCheck if Wayfarer+ is now avalible
+   */
+  async function wayfarerMainRecheck(RecheckCount = 1) {
+    console.log("[WFP]: Wayfarer+ not recognized by now, retry N° " +
+    RecheckCount + "/10");
+    RecheckCount++;
+    await Sleep(RecheckCount * 100);
+    if (typeof settings !== "undefined" && settings["useMods"]) {
+      window.setTimeout(wayfarerMainFunction, 10);
+    } else if (RecheckCount < 11) {
+      window.setTimeout(wayfarerMainRecheck(RecheckCount), 10);
+    } else {
+      RecheckCount = 1;
+      return;
+    }
+  }
+
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
     console.log("[WFP]: Wayfapper recognized");
     // TODO add stuff here, later
@@ -285,54 +365,9 @@
     addWayfarerVisibles();
     // TODO restore wayfarer functions here
     if (typeof settings !== "undefined" && settings["useMods"]) {
-      const stats = document.querySelector("body.is-authenticated");
-      if (stats !== null) {
-        const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
-        const page = rx.exec(document.location.href);
-        if (null !== page) {
-          if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
-            switch (page[1]) {
-              case "review":
-                console.log("[WFP]: reviews");
-                break;
-              case "profile":
-                console.log("[WFP]: profile");
-                window.setTimeout(sendWayfarerProfileData, 100);
-                break;
-              case "nominations":
-                console.log("[WFP]: nominations");
-                window.setTimeout(sendWayfarerNominationsData, 100);
-                break;
-              case "settings":
-                console.log("[WFP]: settings");
-                window.setTimeout(addWayfarerSetting, 10);
-                break;
-              default:
-                console.log("[WFP] unknown URL: " + page[1]);
-                break;
-            }
-          } else {
-            setWayfarerFeedback("s", "red");
-          }
-        } else {
-          // check if gm-storage is filled, else check for old data can be used
-          // this check & conversion will be removed in version 0.2.0
-          // TODO remove @version 0.2.0
-          if (WEBHOOK_TOKEN == -1) {
-            if (localStorage["wayfapper-token"] == undefined) {
-              console.log("[WFP] token: empty");
-            } else {
-              console.log(
-                "[WFP] localstorage: " + localStorage["wayfapper-token"]
-              );
-              GM.setValue("wayfapper-token", localStorage["wayfapper-token"]);
-            }
-          }
-        }
-      } else {
-        console.log("[WFP]: No Login - nothing to do here");
-      }
+      window.setTimeout(wayfarerMainFunction, 10);
     } else {
+      window.setTimeout(wayfarerMainRecheck, 50);
       setWayfarerFeedback("s", "red");
     }
   } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
