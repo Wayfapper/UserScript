@@ -50,8 +50,8 @@
    * @param {init} milliseconds time to wait
    * @return {object} Promise if time has passed
    */
-  function Sleep(milliseconds) {
-   return new Promise(resolve => setTimeout(resolve, milliseconds));
+  function sleep(milliseconds) {
+    return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
 
   /**
@@ -340,18 +340,20 @@
 
   /**
    * ReCheck if Wayfarer+ is now avalible
+   * @param {int} recheckCount loop counter
    */
-  async function wayfarerMainRecheck(RecheckCount = 1) {
-    console.log("[WFP]: Wayfarer+ not recognized by now, retry N° " +
-    RecheckCount + "/10");
-    RecheckCount++;
-    await Sleep(RecheckCount * 100);
+  async function wayfarerMainRecheck(recheckCount = 1) {
+    console.log(
+      "[WFP]: Wayfarer+ not recognized by now, retry N° " + recheckCount + "/10"
+    );
+    recheckCount++;
+    await sleep(recheckCount * 100);
     if (typeof settings !== "undefined" && settings["useMods"]) {
       window.setTimeout(wayfarerMainFunction, 10);
-    } else if (RecheckCount < 11) {
-      window.setTimeout(wayfarerMainRecheck(RecheckCount), 10);
+    } else if (recheckCount < 11) {
+      window.setTimeout(wayfarerMainRecheck(recheckCount), 10);
     } else {
-      RecheckCount = 1;
+      recheckCount = 1;
       return;
     }
   }
