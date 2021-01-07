@@ -291,6 +291,8 @@
   function wayfarerMainFunction() {
     const stats = document.querySelector("body.is-authenticated");
     if (stats !== null) {
+      addWayfarerCss();
+      addWayfarerVisibles();
       const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
       const page = rx.exec(document.location.href);
       if (null !== page) {
@@ -363,8 +365,6 @@
     // TODO add stuff here, later
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log("[WFP]: Wayfarer recognized");
-    addWayfarerCss();
-    addWayfarerVisibles();
     if (typeof settings !== "undefined" && settings["useMods"]) {
       window.setTimeout(wayfarerMainFunction, 10);
     } else {
