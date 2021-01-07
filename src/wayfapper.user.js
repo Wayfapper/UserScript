@@ -134,6 +134,10 @@
     switch (color) {
       case "green":
         setColor = "rgba(0, 255, 0, 0.1)";
+        localStorage["[WFP]_" + sidebarItem] = Date.now();
+        break;
+      case "yellow":
+        setColor = "rgba(255, 255, 0, 0.1)";
         break;
       case "red":
       default:
@@ -295,6 +299,7 @@
       addWayfarerVisibles();
       const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
       const page = rx.exec(document.location.href);
+      console.log(Date.now());
       if (null !== page) {
         if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
           switch (page[1]) {
