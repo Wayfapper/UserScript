@@ -383,9 +383,6 @@
       window.setTimeout(wayfarerMainFunction, 10);
     } else if (recheckCount < 11) {
       window.setTimeout(wayfarerMainRecheck(recheckCount), 10);
-    } else {
-      recheckCount = 1;
-      return;
     }
   }
 
