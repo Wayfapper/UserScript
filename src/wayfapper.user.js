@@ -33,10 +33,9 @@
 
   /**
    * Recieve the stored token, async function needed due to GM_get/set
-   * @param {int} a unused param.
    * @return {string} The stored token.
    */
-  async function getToken(a) {
+  async function getToken() {
     const token = await GM.getValue("wayfapper-token", -1);
     return token;
   }
