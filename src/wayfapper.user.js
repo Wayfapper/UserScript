@@ -382,7 +382,7 @@
     if (typeof settings !== "undefined" && settings["useMods"]) {
       window.setTimeout(wayfarerMainFunction, 10);
     } else if (recheckCount < 11) {
-      window.setTimeout(wayfarerMainRecheck(recheckCount), 10);
+      window.setTimeout(wayfarerMainRecheck, 10, recheckCount);
     }
   }
 
