@@ -386,6 +386,70 @@
     }
   }
 
+
+  /**
+   * Submit data from the intel map
+   * @param {object} data object that contains the portal infos
+   */
+  function sendIntelPortalData(data) {
+    if (checkWebhookToken(WEBHOOK_TOKEN)) {
+      fetch(WEBHOOK_URL + "?&p=w&t=" + WEBHOOK_TOKEN, {
+        method: "POST",
+        body: data,
+      })
+        .then(function (response) {
+          if (!response.ok) {
+            if (response.status >= 400 && response.status <= 499) {
+              console.error("[WFP] 4xx error, not retrying", response);
+            }
+          } else {
+            inFlight = false;
+            checkIntelSend();
+          }
+        })
+        .catch(function (error) {
+          console.warn("[WFP] network error, retrying in 10 seconds", error);
+          window.setTimeout(function () {
+            sendIntelPortalData(data);
+          }, 10000);
+        });
+    }
+  }
+
+  /**
+   * Trim a string
+   * @param {string} str potential space spolluted string
+   * @return {string} str clean string
+   */
+  function safeIntelTrim(str) {
+    if (typeof str === "string") {
+      return str.trim();
+    } else {
+      return str;
+    }
+  }
+
+  /**
+   * Reduce PortalData to the needs
+   * @param {string} guid graphicuserinterfaceid
+   * @param {object} ent portaldata
+   * @return {object} clean portalobject
+   */
+  function IPortal(guid, ent) {
+    return [
+      // portalid
+      guid,
+      // latE6 converted to normal coordinates
+      ent[2] / 1e6,
+      // lngE6  converted to normal coordinates
+      ent[3] / 1e6,
+      // portaltitle
+      ent[8],
+      // portalimage
+      safeIntelTrim(ent[7]),
+    ];
+  }
+
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
     console.log("[WFP]: Wayfapper recognized");
     // TODO add stuff here, later
@@ -404,35 +468,7 @@
     let portals = [];
     let inFlight = false;
     let timerStarted = false;
-
-    /**
-     * Submit data from the intel map
-     * @param {object} data object that contains the portal infos
-     */
-    function sendIntelPortalData(data) {
-      if (checkWebhookToken(WEBHOOK_TOKEN)) {
-        fetch(WEBHOOK_URL + "?&p=w&t=" + WEBHOOK_TOKEN, {
-          method: "POST",
-          body: data,
-        })
-          .then(function (response) {
-            if (!response.ok) {
-              if (response.status >= 400 && response.status <= 499) {
-                console.error("[WFP] 4xx error, not retrying", response);
-              }
-            } else {
-              inFlight = false;
-              checkIntelSend();
-            }
-          })
-          .catch(function (error) {
-            console.warn("[WFP] network error, retrying in 10 seconds", error);
-            window.setTimeout(function () {
-              sendIntelPortalData(data);
-            }, 10000);
-          });
-      }
-    }
+    const ingressMethodRegex = /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
 
     /**
      * Check data from the intel map
@@ -452,41 +488,6 @@
       }
     }
 
-    /**
-     * Trim a string
-     * @param {string} str potential space spolluted string
-     * @return {string} str clean string
-     */
-    function safeIntelTrim(str) {
-      if (typeof str === "string") {
-        return str.trim();
-      } else {
-        return str;
-      }
-    }
-
-    /**
-     * Reduce PortalData to the needs
-     * @param {string} guid graphicuserinterfaceid
-     * @param {object} ent portaldata
-     * @return {object} clean portalobject
-     */
-    function IPortal(guid, ent) {
-      return [
-        // portalid
-        guid,
-        // latE6 converted to normal coordinates
-        ent[2] / 1e6,
-        // lngE6  converted to normal coordinates
-        ent[3] / 1e6,
-        // portaltitle
-        ent[8],
-        // portalimage
-        safeIntelTrim(ent[7]),
-      ];
-    }
-
-    const ingressMethodRegex = /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
     (function (open) {
       XMLHttpRequest.prototype.open = function () {
         if (window.disable_portalfinder) {
