@@ -386,7 +386,6 @@
     }
   }
 
-
   /**
    * Submit data from the intel map
    * @param {object} data object that contains the portal infos
