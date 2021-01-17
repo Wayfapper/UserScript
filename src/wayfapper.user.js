@@ -104,7 +104,6 @@
     badge.insertBefore(badgeNode, badge.childNodes[0]);
   }
 
-
   /**
    * Add a force submission and reload button
    */
@@ -117,6 +116,13 @@
       '<m class="glyphicon glyphicon-retweet"></m><span> Force Submit</span>';
     const fapper = document.querySelector(".sidebar__item--community");
     fapper.parentNode.insertBefore(fapperForce, fapper.nextSibling);
+
+    fapperForce.addEventListener('click', function (e) {
+      e.preventDefault();
+      localStorage["[WFP]_n"] = 0;
+      localStorage["[WFP]_p"] = 0;
+      location.reload();
+    });
   }
 
   /**
