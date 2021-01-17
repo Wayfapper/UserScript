@@ -72,15 +72,6 @@
    */
   function addWayfarerCss() {
     const css = `
-      a.glyphicon.glyphicon-share {
-        margin-right: 13px;
-      }
-      a.sidebar__item.sidebar-wayfapper {
-        padding-left: 15px;
-      }
-      a.sidebar__item.sidebar-wayfapper:hover {
-        padding-left: 10px;
-      }
       span.fapper {
         font-family: Akkurat,Roboto,sans-serif;
       }
