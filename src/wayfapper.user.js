@@ -81,6 +81,9 @@
         border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.5);
         color: white;
+      }
+      .sidebar__item--fapper_force {
+        min-height: 25px !important;
       }`;
     const style = document.createElement("style");
     style.type = "text/css";
@@ -99,6 +102,21 @@
     const badge = document.querySelector(".sidebar__item--settings span")
       .parentNode;
     badge.insertBefore(badgeNode, badge.childNodes[0]);
+  }
+
+
+  /**
+   * Add a force submission and reload button
+   */
+  function addWayfarerForceSubmission() {
+    const fapperForce = document.createElement("a");
+    fapperForce.title = "Force submission after reload";
+    fapperForce.id = "fapper_force";
+    fapperForce.className = "sidebar__item sidebar__item--fapper_force";
+    fapperForce.innerHTML =
+      '<m class="glyphicon glyphicon-retweet"></m><span> Force Submit</span>';
+    const fapper = document.querySelector(".sidebar__item--community");
+    fapper.parentNode.insertBefore(fapperForce, fapper.nextSibling);
   }
 
   /**
@@ -128,6 +146,7 @@
         break;
       case "yellow":
         setColor = "rgba(255, 255, 0, 0.1)";
+        addWayfarerForceSubmission();
         break;
       case "red":
       default:
