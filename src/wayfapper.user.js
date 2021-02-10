@@ -13,11 +13,13 @@
 // @include         https://www.ingress.com/intel*
 // @include         https://ingress.com/intel*
 // @include         https://intel.ingress.com/intel*
+// @include         https://intel.ingress.com/*
 // @match           https://wfp.cr4.me/
 // @match           https://wayfarer.nianticlabs.com/*
 // @match           https://www.ingress.com/intel*
 // @match           https://ingress.com/intel*
 // @match           https://intel.ingress.com/intel*
+// @match           https://intel.ingress.com/*
 // @grant           GM.getValue
 // @grant           GM.setValue
 // @grant           GM_getValue
@@ -476,7 +478,7 @@
       window.setTimeout(wayfarerMainRecheck, 50);
       setWayfarerFeedback("s", "red");
     }
-  } else if (window.location.href.indexOf(".ingress.com/intel") > -1) {
+  } else if (window.location.href.indexOf(".ingress.com/") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
 
     const seenGuids = new Set();
