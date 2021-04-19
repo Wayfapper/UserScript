@@ -1,3 +1,7 @@
+linters:
+    eslint:
+        config: './eslintrc.js'
+        fixer: true
 files:
   ignore:
     - 'bower_components/*'
