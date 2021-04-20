@@ -1,0 +1,10 @@
+linters:
+    eslint:
+        config: './eslintrc.js'
+        fixer: true
+    standardjs:
+    jshint:
+files:
+  ignore:
+    - 'bower_components/*'
+    - 'node_modules/*'
