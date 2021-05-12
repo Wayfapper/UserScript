@@ -101,8 +101,9 @@
     badgeNode.innerHTML = "&nbsp;";
     badgeNode.id = "bage_hover";
     badgeNode.className = "badge";
-    const badge = document.querySelector(".sidebar__item--settings span")
-      .parentNode;
+    const badge = document.querySelector(
+      ".sidebar__item--settings span"
+    ).parentNode;
     badge.insertBefore(badgeNode, badge.childNodes[0]);
   }
 
@@ -485,7 +486,8 @@
     let portals = [];
     let inFlight = false;
     let timerStarted = false;
-    const ingressMethodRegex = /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
+    const ingressMethodRegex =
+      /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
 
     /**
      * Check data from the intel map
