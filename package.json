@@ -19,7 +19,7 @@
     "url": "https://github.com/Wayfapper/UserScript/issues"
   },
   "devDependencies": {
-    "@commitlint/cli": "12.1.4",
+    "@commitlint/cli": "13.1.0",
     "@commitlint/config-conventional": "12.1.4",
     "eslint": "7.32.0",
     "eslint-config-google": "0.14.0",
