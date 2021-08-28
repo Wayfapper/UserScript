@@ -51,7 +51,7 @@
    * Stop this script for a defined time
    * @param {init} milliseconds time to wait
    * @return {object} Promise if time has passed
-   */
+   *\/
   function sleep(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
   }
@@ -133,7 +133,7 @@
    * Change wayfarer sidebare items color as feedback
    * @param {string} sidebarItem the item for the feedback
    * @param {string} color the indication color, default red
-   */
+   *\/
   function setWayfarerFeedback(sidebarItem = "s", color = "red") {
     let setColor = "";
     let setItem = "";
@@ -173,7 +173,7 @@
    * @param {string} page where the trasmissions came from for the check
    * @param {inti} time min passed duraction since last successfull transmition
    * @return {boolean} true if time since last transmission is allready passed
-   */
+   *\/
   function checkWayfarerLastTransmit(page, time = 30) {
     let timestamp = 0;
     if (localStorage["[WFP]_" + page]) {
@@ -339,14 +339,17 @@
    * Select what should happen, when wayfarer is detected
    */
   function wayfarerMainFunction() {
-    let origOpen = XMLHttpRequest.prototype.open;
+    const origOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function () {
       this.addEventListener("load", async function () {
-        if (this.responseURL == "https://wayfarer.nianticlabs.com/api/v1/vault/manage") {
-          let data = JSON.parse(this.responseText).result;
+        if (
+            this.responseURL ==
+            "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
+        ) {
+          const data = JSON.parse(this.responseText).result;
           // console.log(data);
-          sendDataToWayfapper(data,"n")
-        };
+          sendDataToWayfapper(data, "n")
+        }
       });
       origOpen.apply(this, arguments);
     };
@@ -401,7 +404,7 @@
     } else if (recheckCount < 11) {
       window.setTimeout(wayfarerMainRecheck, 10, recheckCount);
     }
-  }
+  }*/
 
   /**
    * Submit data from the intel map
