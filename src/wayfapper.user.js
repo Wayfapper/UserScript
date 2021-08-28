@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.1.7
+// @version         0.2.0
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
@@ -20,6 +20,7 @@
 // @match           https://ingress.com/intel*
 // @match           https://intel.ingress.com/intel*
 // @match           https://intel.ingress.com/*
+// @icon            https://wfp.cr4.me/images/wayfapper_icon.svg
 // @grant           GM.getValue
 // @grant           GM.setValue
 // @grant           GM_getValue
@@ -50,10 +51,10 @@
    * Stop this script for a defined time
    * @param {init} milliseconds time to wait
    * @return {object} Promise if time has passed
-   */
+   *\/
   function sleep(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
-  }
+  }*/
 
   /**
    * Check whether basic requirements for the token are met
@@ -71,7 +72,7 @@
 
   /**
    * Add some stylerules to wayfarer
-   */
+   *\/
   function addWayfarerCss() {
     const css = `
       span.fapper {
@@ -91,11 +92,11 @@
     style.type = "text/css";
     style.innerHTML = css;
     document.querySelector("head").appendChild(style);
-  }
+  }*/
 
   /**
    * Add some visible representation of wayfapper to wayfarer
-   */
+   *\/
   function addWayfarerVisibles() {
     const badgeNode = document.createElement("span");
     badgeNode.innerHTML = "&nbsp;";
@@ -105,11 +106,11 @@
       ".sidebar__item--settings span"
     ).parentNode;
     badge.insertBefore(badgeNode, badge.childNodes[0]);
-  }
+  }*/
 
   /**
    * Add a force submission and reload button
-   */
+   *\/
   function addWayfarerForceSubmission() {
     const fapperForce = document.createElement("a");
     fapperForce.title = "Force submission after reload";
@@ -126,13 +127,13 @@
       localStorage["[WFP]_p"] = 0;
       location.reload();
     });
-  }
+  }*/
 
   /**
    * Change wayfarer sidebare items color as feedback
    * @param {string} sidebarItem the item for the feedback
    * @param {string} color the indication color, default red
-   */
+   *\/
   function setWayfarerFeedback(sidebarItem = "s", color = "red") {
     let setColor = "";
     let setItem = "";
@@ -165,14 +166,14 @@
     document
       .querySelectorAll(setItem)[0]
       .setAttribute("style", "background-color :" + setColor + " !important");
-  }
+  }*/
 
   /**
    * Check, if we should allow another trasmission to wayfapper
    * @param {string} page where the trasmissions came from for the check
    * @param {inti} time min passed duraction since last successfull transmition
    * @return {boolean} true if time since last transmission is allready passed
-   */
+   *\/
   function checkWayfarerLastTransmit(page, time = 30) {
     let timestamp = 0;
     if (localStorage["[WFP]_" + page]) {
@@ -183,7 +184,7 @@
     } else {
       return false;
     }
-  }
+  }*/
 
   /**
    * Change wayfarer sidebare items color as feedback
@@ -195,10 +196,11 @@
       method: "POST",
       body: JSON.stringify(data),
     }).then(function (response) {
+      // skip visuel feedback by now
       if (response.status == 222) {
-        setWayfarerFeedback(page, "green");
+        // setWayfarerFeedback(page, "green");
       } else {
-        setWayfarerFeedback(page, "red");
+        // setWayfarerFeedback(page, "red");
       }
       console.log("[WFP]: " + response.status);
       return response.text().then(function (text) {
@@ -209,7 +211,7 @@
 
   /**
    * Extract and submit data from the wayfarer nominations
-   */
+   *\/
   function sendWayfarerNominationsData() {
     console.log("[WFP]: Nominations waiting");
     if (checkWayfarerLastTransmit("n", 20)) {
@@ -229,11 +231,11 @@
     } else {
       setWayfarerFeedback("n", "yellow");
     }
-  }
+  }*/
 
   /**
    * Extract and submit data from the wayfarer profile
-   */
+   *\/
   function sendWayfarerProfileData() {
     console.log("[WFP]: Profile waiting");
     if (checkWayfarerLastTransmit("p", 5)) {
@@ -284,11 +286,11 @@
     } else {
       setWayfarerFeedback("p", "yellow");
     }
-  }
+  }*/
 
   /**
    * Add some wayfapper options to wayfarer settings
-   */
+   *\/
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
@@ -331,18 +333,33 @@
         await GM.setValue("wayfapper-token", String(token));
       })();
     });
-  }
+  }*/
 
   /**
    * Select what should happen, when wayfarer is detected
    */
   function wayfarerMainFunction() {
-    const stats = document.querySelector("body.is-authenticated");
-    if (stats !== null) {
+    const origOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      this.addEventListener("load", async function () {
+        if (
+          this.responseURL ==
+          "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
+        ) {
+          const data = JSON.parse(this.responseText).result;
+          // console.log(data);
+          sendDataToWayfapper(data, "n");
+        }
+      });
+      origOpen.apply(this, arguments);
+    };
+    // Skip all this by now, only submit nominations
+    /* if (stats !== null) {
       addWayfarerCss();
       addWayfarerVisibles();
-      const rx = /https:\/\/wayfarer.nianticlabs.com\/(\w+)/;
+      const rx = /https:\/\/wayfarer.nianticlabs.com\/new\/(\w+)/;
       const page = rx.exec(document.location.href);
+      console.log(document.location.href);
       if (null !== page) {
         if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
           switch (page[1]) {
@@ -368,30 +385,14 @@
         } else {
           setWayfarerFeedback("s", "red");
         }
-      } else {
-        // check if gm-storage is filled, else check for old data can be used
-        // this check & conversion will be removed in version 0.2.0
-        // TODO remove @version 0.2.0
-        if (WEBHOOK_TOKEN == -1) {
-          if (localStorage["wayfapper-token"] == undefined) {
-            console.log("[WFP] token: empty");
-          } else {
-            console.log(
-              "[WFP] localstorage: " + localStorage["wayfapper-token"]
-            );
-            GM.setValue("wayfapper-token", localStorage["wayfapper-token"]);
-          }
-        }
       }
-    } else {
-      console.log("[WFP]: No Login - nothing to do here");
-    }
+    }*/
   }
 
   /**
    * ReCheck if Wayfarer+ is now avalible
    * @param {int} recheckCount loop counter
-   */
+   *\/
   async function wayfarerMainRecheck(recheckCount = 1) {
     console.log(
       "[WFP]: Wayfarer+ not recognized by now, retry N° " + recheckCount + "/10"
@@ -403,7 +404,7 @@
     } else if (recheckCount < 11) {
       window.setTimeout(wayfarerMainRecheck, 10, recheckCount);
     }
-  }
+  }*/
 
   /**
    * Submit data from the intel map
@@ -473,12 +474,12 @@
     // TODO add stuff here, later
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log("[WFP]: Wayfarer recognized");
-    if (typeof settings !== "undefined" && settings["useMods"]) {
-      window.setTimeout(wayfarerMainFunction, 10);
-    } else {
-      window.setTimeout(wayfarerMainRecheck, 50);
-      setWayfarerFeedback("s", "red");
-    }
+    // if (typeof settings !== "undefined" && settings["useMods"]) {
+    window.setTimeout(wayfarerMainFunction, 10);
+    // } else {
+    //  window.setTimeout(wayfarerMainRecheck, 50);
+    //  setWayfarerFeedback("s", "red");
+    // }
   } else if (window.location.href.indexOf(".ingress.com/") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
 
@@ -548,6 +549,9 @@
                           return;
                         }
                         portals.push(new IPortal(guid, data.result));
+                        sendIntelPortalData(
+                          JSON.stringify(new IPortal(guid, data.result))
+                        );
                       }
                       break;
                     case "getEntities":
