@@ -54,7 +54,7 @@
    *\/
   function sleep(milliseconds) {
     return new Promise((resolve) => setTimeout(resolve, milliseconds));
-  }
+  }*/
 
   /**
    * Check whether basic requirements for the token are met
@@ -92,7 +92,7 @@
     style.type = "text/css";
     style.innerHTML = css;
     document.querySelector("head").appendChild(style);
-  }
+  }*/
 
   /**
    * Add some visible representation of wayfapper to wayfarer
@@ -106,11 +106,11 @@
       ".sidebar__item--settings span"
     ).parentNode;
     badge.insertBefore(badgeNode, badge.childNodes[0]);
-  }
+  }*/
 
   /**
    * Add a force submission and reload button
-   */
+   *\/
   function addWayfarerForceSubmission() {
     const fapperForce = document.createElement("a");
     fapperForce.title = "Force submission after reload";
@@ -127,7 +127,7 @@
       localStorage["[WFP]_p"] = 0;
       location.reload();
     });
-  }
+  }*/
 
   /**
    * Change wayfarer sidebare items color as feedback
@@ -166,7 +166,7 @@
     document
       .querySelectorAll(setItem)[0]
       .setAttribute("style", "background-color :" + setColor + " !important");
-  }
+  }*/
 
   /**
    * Check, if we should allow another trasmission to wayfapper
@@ -184,7 +184,7 @@
     } else {
       return false;
     }
-  }
+  }*/
 
   /**
    * Change wayfarer sidebare items color as feedback
@@ -231,7 +231,7 @@
     } else {
       setWayfarerFeedback("n", "yellow");
     }
-  }
+  }*/
 
   /**
    * Extract and submit data from the wayfarer profile
@@ -286,7 +286,7 @@
     } else {
       setWayfarerFeedback("p", "yellow");
     }
-  }
+  }*/
 
   /**
    * Add some wayfapper options to wayfarer settings
@@ -333,7 +333,7 @@
         await GM.setValue("wayfapper-token", String(token));
       })();
     });
-  }
+  }*/
 
   /**
    * Select what should happen, when wayfarer is detected
@@ -343,12 +343,12 @@
     XMLHttpRequest.prototype.open = function () {
       this.addEventListener("load", async function () {
         if (
-            this.responseURL ==
-            "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
+          this.responseURL ==
+          "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
         ) {
           const data = JSON.parse(this.responseText).result;
           // console.log(data);
-          sendDataToWayfapper(data, "n")
+          sendDataToWayfapper(data, "n");
         }
       });
       origOpen.apply(this, arguments);
