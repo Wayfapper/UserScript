@@ -72,7 +72,7 @@
 
   /**
    * Add some stylerules to wayfarer
-   */
+   *\/
   function addWayfarerCss() {
     const css = `
       span.fapper {
@@ -96,14 +96,14 @@
 
   /**
    * Add some visible representation of wayfapper to wayfarer
-   */
+   *\/
   function addWayfarerVisibles() {
     const badgeNode = document.createElement("span");
     badgeNode.innerHTML = "&nbsp;";
     badgeNode.id = "bage_hover";
     badgeNode.className = "badge";
     const badge = document.querySelector(
-      '.sidebar__item--settings span'
+      ".sidebar__item--settings span"
     ).parentNode;
     badge.insertBefore(badgeNode, badge.childNodes[0]);
   }
@@ -196,11 +196,11 @@
       method: "POST",
       body: JSON.stringify(data),
     }).then(function (response) {
-      //skip visuel feedback by now
+      // skip visuel feedback by now
       if (response.status == 222) {
-        //setWayfarerFeedback(page, "green");
+        // setWayfarerFeedback(page, "green");
       } else {
-        //setWayfarerFeedback(page, "red");
+        // setWayfarerFeedback(page, "red");
       }
       console.log("[WFP]: " + response.status);
       return response.text().then(function (text) {
@@ -211,7 +211,7 @@
 
   /**
    * Extract and submit data from the wayfarer nominations
-   */
+   *\/
   function sendWayfarerNominationsData() {
     console.log("[WFP]: Nominations waiting");
     if (checkWayfarerLastTransmit("n", 20)) {
@@ -222,7 +222,7 @@
           setTimeout(sendWayfarerNominationsData, 100);
         } else {
           // WF+ data object is loaded, let's start
-            sendDataToWayfapper(nomCtrl.nomList, "n");
+          sendDataToWayfapper(nomCtrl.nomList, "n");
         }
       } else {
         // WF+ data object isn't available, retour to the start
@@ -235,7 +235,7 @@
 
   /**
    * Extract and submit data from the wayfarer profile
-   */
+   *\/
   function sendWayfarerProfileData() {
     console.log("[WFP]: Profile waiting");
     if (checkWayfarerLastTransmit("p", 5)) {
@@ -290,7 +290,7 @@
 
   /**
    * Add some wayfapper options to wayfarer settings
-   */
+   *\/
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
@@ -339,19 +339,19 @@
    * Select what should happen, when wayfarer is detected
    */
   function wayfarerMainFunction() {
-    var origOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function() {
-        this.addEventListener('load',async function() {
-            if (this.responseURL == 'https://wayfarer.nianticlabs.com/api/v1/vault/manage') {
-                var data = JSON.parse(this.responseText).result;
-                //console.log(data);
-                sendDataToWayfapper(data,'n')
-            };
-        });
-        origOpen.apply(this, arguments);
+    let origOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function () {
+      this.addEventListener("load", async function () {
+        if (this.responseURL == "https://wayfarer.nianticlabs.com/api/v1/vault/manage") {
+          let data = JSON.parse(this.responseText).result;
+          // console.log(data);
+          sendDataToWayfapper(data,"n")
+        };
+      });
+      origOpen.apply(this, arguments);
     };
-    //Skip all this by now, only submit nominations
-    /*if (stats !== null) {
+    // Skip all this by now, only submit nominations
+    /* if (stats !== null) {
       addWayfarerCss();
       addWayfarerVisibles();
       const rx = /https:\/\/wayfarer.nianticlabs.com\/new\/(\w+)/;
@@ -389,7 +389,7 @@
   /**
    * ReCheck if Wayfarer+ is now avalible
    * @param {int} recheckCount loop counter
-   */
+   *\/
   async function wayfarerMainRecheck(recheckCount = 1) {
     console.log(
       "[WFP]: Wayfarer+ not recognized by now, retry N° " + recheckCount + "/10"
@@ -471,12 +471,12 @@
     // TODO add stuff here, later
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log("[WFP]: Wayfarer recognized");
-    //if (typeof settings !== "undefined" && settings["useMods"]) {
-      window.setTimeout(wayfarerMainFunction, 10);
-    //} else {
+    // if (typeof settings !== "undefined" && settings["useMods"]) {
+    window.setTimeout(wayfarerMainFunction, 10);
+    // } else {
     //  window.setTimeout(wayfarerMainRecheck, 50);
     //  setWayfarerFeedback("s", "red");
-    //}
+    // }
   } else if (window.location.href.indexOf(".ingress.com/") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
 
@@ -485,7 +485,7 @@
     let inFlight = false;
     let timerStarted = false;
     const ingressMethodRegex =
-      /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i
+      /^(?:(?:https?:)?\/\/(?:www\.|intel\.)?ingress\.com)?\/r\/(getPortalDetails|getEntities)$/i;
 
     /**
      * Check data from the intel map
@@ -546,8 +546,9 @@
                           return;
                         }
                         portals.push(new IPortal(guid, data.result));
-                        console.log("[WFP]: MEP MEP");
-                        sendIntelPortalData(JSON.stringify(new IPortal(guid, data.result)));
+                        sendIntelPortalData(
+                          JSON.stringify(new IPortal(guid, data.result))
+                        );
                       }
                       break;
                     case "getEntities":
