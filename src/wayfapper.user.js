@@ -210,85 +210,6 @@
   }
 
   /**
-   * Extract and submit data from the wayfarer nominations
-   *\/
-  function sendWayfarerNominationsData() {
-    console.log("[WFP]: Nominations waiting");
-    if (checkWayfarerLastTransmit("n", 20)) {
-      if (typeof nomCtrl !== "undefined") {
-        // WF+ data object is available
-        if (!nomCtrl.loaded) {
-          // WF+ data object isn't loaded yet, but available, retour to the start
-          setTimeout(sendWayfarerNominationsData, 100);
-        } else {
-          // WF+ data object is loaded, let's start
-          sendDataToWayfapper(nomCtrl.nomList, "n");
-        }
-      } else {
-        // WF+ data object isn't available, retour to the start
-        setTimeout(sendWayfarerNominationsData, 100);
-      }
-    } else {
-      setWayfarerFeedback("n", "yellow");
-    }
-  }*/
-
-  /**
-   * Extract and submit data from the wayfarer profile
-   *\/
-  function sendWayfarerProfileData() {
-    console.log("[WFP]: Profile waiting");
-    if (checkWayfarerLastTransmit("p", 5)) {
-      if (typeof pCtrl !== "undefined") {
-        // WF+ data object is available
-        if (!pCtrl.loaded) {
-          // WF+ data object isn't loaded yet, but available, retour to the start
-          setTimeout(sendWayfarerProfileData, 100);
-        } else {
-          // WF+ data object is loaded, let's start
-          const profileStats = document.getElementById("profile-stats");
-          const jprovile = {};
-          jprovile.reviews = parseInt(
-            profileStats.children[0].children[0].children[1].innerText
-          );
-          if (
-            settings["profExtendedStats"] == "truth" ||
-            settings["profExtendedStats"] == "aprox"
-          ) {
-            jprovile.nominations_pos = parseInt(
-              profileStats.children[1].children[2].children[1].innerText
-            );
-            jprovile.nominations_neg = parseInt(
-              profileStats.children[1].children[3].children[1].innerText
-            );
-            jprovile.dublicates = parseInt(
-              profileStats.children[1].children[4].children[1].innerText
-            );
-          } else if (settings["profExtendedStats"] == "off") {
-            jprovile.nominations_pos = parseInt(
-              profileStats.children[1].children[1].children[1].innerText
-            );
-            jprovile.nominations_neg = parseInt(
-              profileStats.children[1].children[2].children[1].innerText
-            );
-            jprovile.dublicates = parseInt(
-              profileStats.children[1].children[3].children[1].innerText
-            );
-          } else {
-            return;
-          }
-          sendDataToWayfapper(jprovile, "p");
-        }
-      } else {
-        // WF+ data object isn't available, retour to the start
-        setTimeout(sendWayfarerProfileData, 100);
-      }
-    } else {
-      setWayfarerFeedback("p", "yellow");
-    }
-  }*/
-
-  /**
    * Add some wayfapper options to wayfarer settings
    */
   function addWayfarerSetting() {
@@ -390,18 +311,6 @@
           switch (page[1]) {
             case "review":
               console.log("[WFP]: reviews");
-              break;
-            case "profile":
-              console.log("[WFP]: profile");
-              window.setTimeout(sendWayfarerProfileData, 100);
-              break;
-            case "nominations":
-              console.log("[WFP]: nominations");
-              window.setTimeout(sendWayfarerNominationsData, 100);
-              break;
-            case "settings":
-              console.log("[WFP]: settings");
-              window.setTimeout(addWayfarerSetting, 10);
               break;
             default:
               console.log("[WFP] unknown URL: " + page[1]);
