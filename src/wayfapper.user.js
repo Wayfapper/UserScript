@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.2.0
+// @version         0.2.1
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
@@ -44,7 +44,7 @@
   }
 
   // define basic parameter that are used everywhere
-  const WEBHOOK_URL = "https://wfp.cr4.me/api/v5/webhook.php";
+  const WEBHOOK_URL = "https://wfp.cr4.me/api/v7/webhook.php";
   const WEBHOOK_TOKEN = await getToken();
 
   /**
@@ -290,7 +290,7 @@
 
   /**
    * Add some wayfapper options to wayfarer settings
-   *\/
+   */
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
@@ -300,27 +300,38 @@
       dispToken =
         WEBHOOK_TOKEN.substring(0, 5) + "***" + WEBHOOK_TOKEN.substring(59, 64);
     }
-    const h3WfrSetting = document.createElement("h3");
+    const h3WfrSetting = document.createElement("h2");
     h3WfrSetting.innerHTML = "Wayfapper";
-    h3WfrSetting.className = "settings__breadcrumb";
+    h3WfrSetting.className = "wf-page-header__title ng-star-inserted";
 
     const divWfrSetting = document.createElement("div");
     divWfrSetting.className = "settings-content";
     divWfrSetting.innerHTML =
-      '<div class="settings-item">' +
-      '<div class="item-header">' +
-      "<span>Wayfapper-Token</span>" +
-      '<div class="item-edit icon" id="wfp_token_pop">' +
-      "</div>" +
-      "</div>" +
-      '<div class="item-value ng-binding">' +
-      dispToken +
-      "</div>" +
-      '<div class="item-text additional-description">Dein persönlicher ' +
-      "Token, der dich gegenüber dem Wayfapper-Projekt ausweist" +
-      "</div>";
+        '<div class="max-w-md ng-star-inserted">' +
+        '<div class="settings__item settings-item">' +
+        '<div class="settings-item__header">' +
+        "<div>Wayfapper-Token</div>" +
+        "<div>" +
+        '<app-edit-setting-button _nghost-soo-c173="" id="wfp_token_pop">' +
+        '<button _ngcontent-soo-c173="" wf-button="" wftype="icon" class="wf-button ' +
+        'wf-button--icon">' +
+        '<mat-icon _ngcontent-soo-c173="" role="img" class="mat-icon notranslate ' +
+        'material-icons mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">' +
+        'edit</mat-icon>' +
+        "</button>" +
+        "</app-edit-setting-button>" +
+        "</div>" +
+        "</div>" +
+        '<div class="settings-item__value">' +
+        dispToken +
+        "</div>" +
+        '<div class="settings-item__description">' +
+        'Dein persönlicher Token, der dich gegenüber dem Wayfapper-Projekt ausweist'
+        "</div>" +
+        "</div>" +
+        "</div>";
 
-    const h3Wfr = document.querySelector("h3").parentNode;
+    const h3Wfr = document.querySelector("wf-page-header").parentNode;
     h3Wfr.insertBefore(divWfrSetting, h3Wfr.childNodes[0]);
     h3Wfr.insertBefore(h3WfrSetting, h3Wfr.childNodes[0]);
 
@@ -333,7 +344,7 @@
         await GM.setValue("wayfapper-token", String(token));
       })();
     });
-  }*/
+  }
 
   /**
    * Select what should happen, when wayfarer is detected
@@ -346,9 +357,23 @@
           this.responseURL ==
           "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
         ) {
-          const data = JSON.parse(this.responseText).result;
+          const nominations = JSON.parse(this.responseText).result;
           // console.log(data);
-          sendDataToWayfapper(data, "n");
+          sendDataToWayfapper(nominations, "n");
+        }
+        if (
+          this.responseURL ==
+          "https://wayfarer.nianticlabs.com/api/v1/vault/profile"
+        ) {
+          const profile = JSON.parse(this.responseText).result;
+          // console.log(data);
+          sendDataToWayfapper(profile, "p");
+        }
+        if (
+          this.responseURL ==
+          "https://wayfarer.nianticlabs.com/api/v1/vault/settings"
+        ) {
+            window.setTimeout(addWayfarerSetting, 1000);
         }
       });
       origOpen.apply(this, arguments);
