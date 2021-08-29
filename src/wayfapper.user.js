@@ -72,119 +72,88 @@
 
   /**
    * Add some stylerules to wayfarer
-   *\/
+   */
   function addWayfarerCss() {
     const css = `
-      span.fapper {
-        font-family: Akkurat,Roboto,sans-serif;
-      }
       .badge {
         position: absolute;
         padding: 5px 10px !important;
         border-radius: 50%;
         background-color: rgba(0, 0, 0, 0.5);
         color: white;
-      }
-      .sidebar__item--fapper_force {
-        min-height: 25px !important;
       }`;
     const style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = css;
     document.querySelector("head").appendChild(style);
-  }*/
+  }
 
   /**
    * Add some visible representation of wayfapper to wayfarer
-   *\/
+   */
   function addWayfarerVisibles() {
     const badgeNode = document.createElement("span");
-    badgeNode.innerHTML = "&nbsp;";
+    badgeNode.innerHTML = "&nbsp;&nbsp;";
     badgeNode.id = "bage_hover";
     badgeNode.className = "badge";
-    const badge = document.querySelector(
-      ".sidebar__item--settings span"
-    ).parentNode;
-    badge.insertBefore(badgeNode, badge.childNodes[0]);
-  }*/
-
-  /**
-   * Add a force submission and reload button
-   *\/
-  function addWayfarerForceSubmission() {
-    const fapperForce = document.createElement("a");
-    fapperForce.title = "Force submission after reload";
-    fapperForce.id = "fapper_force";
-    fapperForce.className = "sidebar__item sidebar__item--fapper_force";
-    fapperForce.innerHTML =
-      '<m class="glyphicon glyphicon-retweet"></m><span> Force Submit</span>';
-    const fapper = document.querySelector(".sidebar__item--community");
-    fapper.parentNode.insertBefore(fapperForce, fapper.nextSibling);
-
-    fapperForce.addEventListener("click", function (e) {
-      e.preventDefault();
-      localStorage["[WFP]_n"] = 0;
-      localStorage["[WFP]_p"] = 0;
-      location.reload();
-    });
-  }*/
+    const badge = document.querySelector("a[href='/new/settings']");
+    badge.insertBefore(badgeNode, badge.childNodes[1]);
+  }
 
   /**
    * Change wayfarer sidebare items color as feedback
    * @param {string} sidebarItem the item for the feedback
    * @param {string} color the indication color, default red
-   *\/
+   */
   function setWayfarerFeedback(sidebarItem = "s", color = "red") {
-    let setColor = "";
-    let setItem = "";
-    switch (sidebarItem) {
-      case "p":
-        setItem = ".sidebar__item--profile";
-        break;
-      case "n":
-        setItem = ".sidebar__item--nominations";
-        break;
-      case "s":
-      default:
-        setItem = ".sidebar__item--settings";
-        break;
-    }
+    let sRed = 0;
+    let sGreen = 0;
+    let sBlue = 0;
+    let count = 0;
+    const setItem = document.querySelector("#bage_hover");
     switch (color) {
       case "green":
-        setColor = "rgba(0, 255, 0, 0.1)";
-        localStorage["[WFP]_" + sidebarItem] = Date.now();
+        sGreen = 255;
         break;
       case "yellow":
-        setColor = "rgba(255, 255, 0, 0.1)";
-        addWayfarerForceSubmission();
+        sRed = 255;
+        sGreen = 255;
         break;
       case "red":
       default:
-        setColor = "rgba(255, 0, 0, 0.1)";
+        sRed = 255;
         break;
     }
-    document
-      .querySelectorAll(setItem)[0]
-      .setAttribute("style", "background-color :" + setColor + " !important");
-  }*/
-
-  /**
-   * Check, if we should allow another trasmission to wayfapper
-   * @param {string} page where the trasmissions came from for the check
-   * @param {inti} time min passed duraction since last successfull transmition
-   * @return {boolean} true if time since last transmission is allready passed
-   *\/
-  function checkWayfarerLastTransmit(page, time = 30) {
-    let timestamp = 0;
-    if (localStorage["[WFP]_" + page]) {
-      timestamp = parseInt(localStorage["[WFP]_" + page]);
-    }
-    if (Date.now() > time * 60 * 1000 + timestamp) {
-      return true;
+    const cond = document.getElementById('bage_hover') || false
+    if (cond) {
+        var interval = setInterval(function() {
+            if(count > 255) {
+                clearInterval(interval);
+                return;
+            }
+            if (sRed - count < 0) {
+                sRed = 0;
+            } else {
+                sRed = sRed - count;
+            }
+            if (sGreen - count < 0) {
+                sGreen = 0;
+            } else {
+                sGreen = sGreen - count;
+            }
+            if (sBlue - count < 0) {
+                sBlue = 0;
+            } else {
+                sBlue = sBlue - count;
+            }
+            setItem.style.backgroundColor = "rgba(" + sRed + ", " + sGreen + ", " + sBlue + ", 0.5)";
+            //console.log(rgba(sRed, sGreen, sBlue, 0.5));
+            count++
+        }, 100);
     } else {
-      return false;
+        window.setTimeout(setWayfarerFeedback, 1000, sidebarItem, color);
     }
-  }*/
+  }
 
   /**
    * Change wayfarer sidebare items color as feedback
@@ -198,9 +167,9 @@
     }).then(function (response) {
       // skip visuel feedback by now
       if (response.status == 222) {
-        // setWayfarerFeedback(page, "green");
+        setWayfarerFeedback(page, "green");
       } else {
-        // setWayfarerFeedback(page, "red");
+        setWayfarerFeedback(page, "red");
       }
       console.log("[WFP]: " + response.status);
       return response.text().then(function (text) {
@@ -299,46 +268,8 @@
       });
       origOpen.apply(this, arguments);
     };
-    // Skip all this by now, only submit nominations
-    /* if (stats !== null) {
-      addWayfarerCss();
-      addWayfarerVisibles();
-      const rx = /https:\/\/wayfarer.nianticlabs.com\/new\/(\w+)/;
-      const page = rx.exec(document.location.href);
-      console.log(document.location.href);
-      if (null !== page) {
-        if (page[1] == "settings" || checkWebhookToken(WEBHOOK_TOKEN)) {
-          switch (page[1]) {
-            case "review":
-              console.log("[WFP]: reviews");
-              break;
-            default:
-              console.log("[WFP] unknown URL: " + page[1]);
-              break;
-          }
-        } else {
-          setWayfarerFeedback("s", "red");
-        }
-      }
-    }*/
+    window.setTimeout(addWayfarerVisibles, 5000);
   }
-
-  /**
-   * ReCheck if Wayfarer+ is now avalible
-   * @param {int} recheckCount loop counter
-   *\/
-  async function wayfarerMainRecheck(recheckCount = 1) {
-    console.log(
-      "[WFP]: Wayfarer+ not recognized by now, retry N° " + recheckCount + "/10"
-    );
-    recheckCount++;
-    await sleep(recheckCount * 100);
-    if (typeof settings !== "undefined" && settings["useMods"]) {
-      window.setTimeout(wayfarerMainFunction, 10);
-    } else if (recheckCount < 11) {
-      window.setTimeout(wayfarerMainRecheck, 10, recheckCount);
-    }
-  }*/
 
   /**
    * Submit data from the intel map
@@ -408,12 +339,8 @@
     // TODO add stuff here, later
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log("[WFP]: Wayfarer recognized");
-    // if (typeof settings !== "undefined" && settings["useMods"]) {
+    addWayfarerCss();
     window.setTimeout(wayfarerMainFunction, 10);
-    // } else {
-    //  window.setTimeout(wayfarerMainRecheck, 50);
-    //  setWayfarerFeedback("s", "red");
-    // }
   } else if (window.location.href.indexOf(".ingress.com/") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
 
