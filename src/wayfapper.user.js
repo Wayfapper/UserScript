@@ -307,29 +307,29 @@
     const divWfrSetting = document.createElement("div");
     divWfrSetting.className = "settings-content";
     divWfrSetting.innerHTML =
-        '<div class="max-w-md ng-star-inserted">' +
-        '<div class="settings__item settings-item">' +
-        '<div class="settings-item__header">' +
-        "<div>Wayfapper-Token</div>" +
-        "<div>" +
-        '<app-edit-setting-button _nghost-soo-c173="" id="wfp_token_pop">' +
-        '<button _ngcontent-soo-c173="" wf-button="" wftype="icon" class="wf-button ' +
-        'wf-button--icon">' +
-        '<mat-icon _ngcontent-soo-c173="" role="img" class="mat-icon notranslate ' +
-        'material-icons mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">' +
-        'edit</mat-icon>' +
-        "</button>" +
-        "</app-edit-setting-button>" +
-        "</div>" +
-        "</div>" +
-        '<div class="settings-item__value">' +
-        dispToken +
-        "</div>" +
-        '<div class="settings-item__description">' +
-        'Dein persönlicher Token, der dich gegenüber dem Wayfapper-Projekt ausweist'
-        "</div>" +
-        "</div>" +
-        "</div>";
+      '<div class="max-w-md ng-star-inserted">' +
+      '<div class="settings__item settings-item">' +
+      '<div class="settings-item__header">' +
+      "<div>Wayfapper-Token</div>" +
+      "<div>" +
+      '<app-edit-setting-button _nghost-soo-c173="" id="wfp_token_pop">' +
+      '<button _ngcontent-soo-c173="" wf-button="" wftype="icon" class="wf-button ' +
+      'wf-button--icon">' +
+      '<mat-icon _ngcontent-soo-c173="" role="img" class="mat-icon notranslate ' +
+      'material-icons mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">' +
+      "edit</mat-icon>" +
+      "</button>" +
+      "</app-edit-setting-button>" +
+      "</div>" +
+      "</div>" +
+      '<div class="settings-item__value">' +
+      dispToken +
+      "</div>" +
+      '<div class="settings-item__description">' +
+      "Dein persönlicher Token, der dich gegenüber dem Wayfapper-Projekt ausweist" +
+      "</div>" +
+      "</div>" +
+      "</div>";
 
     const h3Wfr = document.querySelector("wf-page-header").parentNode;
     h3Wfr.insertBefore(divWfrSetting, h3Wfr.childNodes[0]);
@@ -373,7 +373,7 @@
           this.responseURL ==
           "https://wayfarer.nianticlabs.com/api/v1/vault/settings"
         ) {
-            window.setTimeout(addWayfarerSetting, 1000);
+          window.setTimeout(addWayfarerSetting, 1000);
         }
       });
       origOpen.apply(this, arguments);
