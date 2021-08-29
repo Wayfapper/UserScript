@@ -92,12 +92,20 @@
    * Add some visible representation of wayfapper to wayfarer
    */
   function addWayfarerVisibles() {
-    const badgeNode = document.createElement("span");
-    badgeNode.innerHTML = "&nbsp;&nbsp;";
-    badgeNode.id = "bage_hover";
-    badgeNode.className = "badge";
-    const badge = document.querySelector("a[href='/new/settings']");
-    badge.insertBefore(badgeNode, badge.childNodes[1]);
+    if (document.getElementById('bage_hover') || false) {
+      return;
+    }
+    const checkElement = document.querySelector("a[href='/new/settings']") || false
+    if (checkElement) {
+      const badgeNode = document.createElement("span");
+      badgeNode.innerHTML = "&nbsp;&nbsp;";
+      badgeNode.id = "bage_hover";
+      badgeNode.className = "badge";
+      const badge = document.querySelector("a[href='/new/settings']");
+      badge.insertBefore(badgeNode, badge.childNodes[1]);
+    } else {
+      window.setTimeout(addWayfarerVisibles, 100);
+    }
   }
 
   /**
@@ -127,31 +135,30 @@
     const cond = document.getElementById('bage_hover') || false
     if (cond) {
         var interval = setInterval(function() {
-            if(count > 255) {
+            if(count > 254) {
                 clearInterval(interval);
                 return;
             }
-            if (sRed - count < 0) {
+            if (sRed - 1 < 0) {
                 sRed = 0;
             } else {
-                sRed = sRed - count;
+                sRed = sRed - 1;
             }
-            if (sGreen - count < 0) {
+            if (sGreen - 1 < 0) {
                 sGreen = 0;
             } else {
-                sGreen = sGreen - count;
+                sGreen = sGreen - 1;
             }
-            if (sBlue - count < 0) {
+            if (sBlue - 1 < 0) {
                 sBlue = 0;
             } else {
-                sBlue = sBlue - count;
+                sBlue = sBlue - 1;
             }
             setItem.style.backgroundColor = "rgba(" + sRed + ", " + sGreen + ", " + sBlue + ", 0.5)";
-            //console.log(rgba(sRed, sGreen, sBlue, 0.5));
             count++
-        }, 100);
+        }, 10);
     } else {
-        window.setTimeout(setWayfarerFeedback, 1000, sidebarItem, color);
+        window.setTimeout(setWayfarerFeedback, 100, sidebarItem, color);
     }
   }
 
@@ -233,8 +240,8 @@
         if (!token) return;
         await GM.setValue("wayfapper-token", String(token));
       })();
-    });
-  }
+    })
+  };
 
   /**
    * Select what should happen, when wayfarer is detected
@@ -268,7 +275,6 @@
       });
       origOpen.apply(this, arguments);
     };
-    window.setTimeout(addWayfarerVisibles, 5000);
   }
 
   /**
@@ -340,6 +346,7 @@
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
     console.log("[WFP]: Wayfarer recognized");
     addWayfarerCss();
+    addWayfarerVisibles();
     window.setTimeout(wayfarerMainFunction, 10);
   } else if (window.location.href.indexOf(".ingress.com/") > -1) {
     console.log("[WFP]: Ingress Intel-Map recognized");
