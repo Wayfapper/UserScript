@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.2.0
+// @version         0.2.1
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
@@ -44,7 +44,7 @@
   }
 
   // define basic parameter that are used everywhere
-  const WEBHOOK_URL = "https://wfp.cr4.me/api/v5/webhook.php";
+  const WEBHOOK_URL = "https://wfp.cr4.me/api/v7/webhook.php";
   const WEBHOOK_TOKEN = await getToken();
 
   /**
@@ -210,87 +210,8 @@
   }
 
   /**
-   * Extract and submit data from the wayfarer nominations
-   *\/
-  function sendWayfarerNominationsData() {
-    console.log("[WFP]: Nominations waiting");
-    if (checkWayfarerLastTransmit("n", 20)) {
-      if (typeof nomCtrl !== "undefined") {
-        // WF+ data object is available
-        if (!nomCtrl.loaded) {
-          // WF+ data object isn't loaded yet, but available, retour to the start
-          setTimeout(sendWayfarerNominationsData, 100);
-        } else {
-          // WF+ data object is loaded, let's start
-          sendDataToWayfapper(nomCtrl.nomList, "n");
-        }
-      } else {
-        // WF+ data object isn't available, retour to the start
-        setTimeout(sendWayfarerNominationsData, 100);
-      }
-    } else {
-      setWayfarerFeedback("n", "yellow");
-    }
-  }*/
-
-  /**
-   * Extract and submit data from the wayfarer profile
-   *\/
-  function sendWayfarerProfileData() {
-    console.log("[WFP]: Profile waiting");
-    if (checkWayfarerLastTransmit("p", 5)) {
-      if (typeof pCtrl !== "undefined") {
-        // WF+ data object is available
-        if (!pCtrl.loaded) {
-          // WF+ data object isn't loaded yet, but available, retour to the start
-          setTimeout(sendWayfarerProfileData, 100);
-        } else {
-          // WF+ data object is loaded, let's start
-          const profileStats = document.getElementById("profile-stats");
-          const jprovile = {};
-          jprovile.reviews = parseInt(
-            profileStats.children[0].children[0].children[1].innerText
-          );
-          if (
-            settings["profExtendedStats"] == "truth" ||
-            settings["profExtendedStats"] == "aprox"
-          ) {
-            jprovile.nominations_pos = parseInt(
-              profileStats.children[1].children[2].children[1].innerText
-            );
-            jprovile.nominations_neg = parseInt(
-              profileStats.children[1].children[3].children[1].innerText
-            );
-            jprovile.dublicates = parseInt(
-              profileStats.children[1].children[4].children[1].innerText
-            );
-          } else if (settings["profExtendedStats"] == "off") {
-            jprovile.nominations_pos = parseInt(
-              profileStats.children[1].children[1].children[1].innerText
-            );
-            jprovile.nominations_neg = parseInt(
-              profileStats.children[1].children[2].children[1].innerText
-            );
-            jprovile.dublicates = parseInt(
-              profileStats.children[1].children[3].children[1].innerText
-            );
-          } else {
-            return;
-          }
-          sendDataToWayfapper(jprovile, "p");
-        }
-      } else {
-        // WF+ data object isn't available, retour to the start
-        setTimeout(sendWayfarerProfileData, 100);
-      }
-    } else {
-      setWayfarerFeedback("p", "yellow");
-    }
-  }*/
-
-  /**
    * Add some wayfapper options to wayfarer settings
-   *\/
+   */
   function addWayfarerSetting() {
     // TODO change german language to languagekeys
     let dispToken = "";
@@ -300,27 +221,38 @@
       dispToken =
         WEBHOOK_TOKEN.substring(0, 5) + "***" + WEBHOOK_TOKEN.substring(59, 64);
     }
-    const h3WfrSetting = document.createElement("h3");
+    const h3WfrSetting = document.createElement("h2");
     h3WfrSetting.innerHTML = "Wayfapper";
-    h3WfrSetting.className = "settings__breadcrumb";
+    h3WfrSetting.className = "wf-page-header__title ng-star-inserted";
 
     const divWfrSetting = document.createElement("div");
     divWfrSetting.className = "settings-content";
     divWfrSetting.innerHTML =
-      '<div class="settings-item">' +
-      '<div class="item-header">' +
-      "<span>Wayfapper-Token</span>" +
-      '<div class="item-edit icon" id="wfp_token_pop">' +
+      '<div class="max-w-md ng-star-inserted">' +
+      '<div class="settings__item settings-item">' +
+      '<div class="settings-item__header">' +
+      "<div>Wayfapper-Token</div>" +
+      "<div>" +
+      '<app-edit-setting-button _nghost-soo-c173="" id="wfp_token_pop">' +
+      '<button _ngcontent-soo-c173="" wf-button="" wftype="icon" class="wf-button ' +
+      'wf-button--icon">' +
+      '<mat-icon _ngcontent-soo-c173="" role="img" class="mat-icon notranslate ' +
+      'material-icons mat-icon-no-color" aria-hidden="true" data-mat-icon-type="font">' +
+      "edit</mat-icon>" +
+      "</button>" +
+      "</app-edit-setting-button>" +
       "</div>" +
       "</div>" +
-      '<div class="item-value ng-binding">' +
+      '<div class="settings-item__value">' +
       dispToken +
       "</div>" +
-      '<div class="item-text additional-description">Dein persönlicher ' +
-      "Token, der dich gegenüber dem Wayfapper-Projekt ausweist" +
+      '<div class="settings-item__description">' +
+      "Dein persönlicher Token, der dich gegenüber dem Wayfapper-Projekt ausweist" +
+      "</div>" +
+      "</div>" +
       "</div>";
 
-    const h3Wfr = document.querySelector("h3").parentNode;
+    const h3Wfr = document.querySelector("wf-page-header").parentNode;
     h3Wfr.insertBefore(divWfrSetting, h3Wfr.childNodes[0]);
     h3Wfr.insertBefore(h3WfrSetting, h3Wfr.childNodes[0]);
 
@@ -333,7 +265,7 @@
         await GM.setValue("wayfapper-token", String(token));
       })();
     });
-  }*/
+  }
 
   /**
    * Select what should happen, when wayfarer is detected
@@ -346,9 +278,23 @@
           this.responseURL ==
           "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
         ) {
-          const data = JSON.parse(this.responseText).result;
+          const nominations = JSON.parse(this.responseText).result;
           // console.log(data);
-          sendDataToWayfapper(data, "n");
+          sendDataToWayfapper(nominations, "n");
+        }
+        if (
+          this.responseURL ==
+          "https://wayfarer.nianticlabs.com/api/v1/vault/profile"
+        ) {
+          const profile = JSON.parse(this.responseText).result;
+          // console.log(data);
+          sendDataToWayfapper(profile, "p");
+        }
+        if (
+          this.responseURL ==
+          "https://wayfarer.nianticlabs.com/api/v1/vault/settings"
+        ) {
+          window.setTimeout(addWayfarerSetting, 1000);
         }
       });
       origOpen.apply(this, arguments);
@@ -365,18 +311,6 @@
           switch (page[1]) {
             case "review":
               console.log("[WFP]: reviews");
-              break;
-            case "profile":
-              console.log("[WFP]: profile");
-              window.setTimeout(sendWayfarerProfileData, 100);
-              break;
-            case "nominations":
-              console.log("[WFP]: nominations");
-              window.setTimeout(sendWayfarerNominationsData, 100);
-              break;
-            case "settings":
-              console.log("[WFP]: settings");
-              window.setTimeout(addWayfarerSetting, 10);
               break;
             default:
               console.log("[WFP] unknown URL: " + page[1]);
