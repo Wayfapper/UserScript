@@ -92,10 +92,11 @@
    * Add some visible representation of wayfapper to wayfarer
    */
   function addWayfarerVisibles() {
-    if (document.getElementById('bage_hover') || false) {
+    if (document.getElementById("bage_hover") || false) {
       return;
     }
-    const checkElement = document.querySelector("a[href='/new/settings']") || false
+    const checkElement =
+      document.querySelector("a[href='/new/settings']") || false;
     if (checkElement) {
       const badgeNode = document.createElement("span");
       badgeNode.innerHTML = "&nbsp;&nbsp;";
@@ -132,33 +133,34 @@
         sRed = 255;
         break;
     }
-    const cond = document.getElementById('bage_hover') || false
+    const cond = document.getElementById("bage_hover") || false;
     if (cond) {
-        var interval = setInterval(function() {
-            if(count > 254) {
-                clearInterval(interval);
-                return;
-            }
-            if (sRed - 1 < 0) {
-                sRed = 0;
-            } else {
-                sRed = sRed - 1;
-            }
-            if (sGreen - 1 < 0) {
-                sGreen = 0;
-            } else {
-                sGreen = sGreen - 1;
-            }
-            if (sBlue - 1 < 0) {
-                sBlue = 0;
-            } else {
-                sBlue = sBlue - 1;
-            }
-            setItem.style.backgroundColor = "rgba(" + sRed + ", " + sGreen + ", " + sBlue + ", 0.5)";
-            count++
-        }, 10);
+      const interval = setInterval(function () {
+        if (count > 254) {
+          clearInterval(interval);
+          return;
+        }
+        if (sRed - 1 < 0) {
+          sRed = 0;
+        } else {
+          sRed = sRed - 1;
+        }
+        if (sGreen - 1 < 0) {
+          sGreen = 0;
+        } else {
+          sGreen = sGreen - 1;
+        }
+        if (sBlue - 1 < 0) {
+          sBlue = 0;
+        } else {
+          sBlue = sBlue - 1;
+        }
+        setItem.style.backgroundColor =
+          "rgba(" + sRed + ", " + sGreen + ", " + sBlue + ", 0.5)";
+        count++;
+      }, 10);
     } else {
-        window.setTimeout(setWayfarerFeedback, 100, sidebarItem, color);
+      window.setTimeout(setWayfarerFeedback, 100, sidebarItem, color);
     }
   }
 
@@ -240,8 +242,8 @@
         if (!token) return;
         await GM.setValue("wayfapper-token", String(token));
       })();
-    })
-  };
+    });
+  }
 
   /**
    * Select what should happen, when wayfarer is detected
