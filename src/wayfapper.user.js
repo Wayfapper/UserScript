@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.2.5
+// @version         0.2.6
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
