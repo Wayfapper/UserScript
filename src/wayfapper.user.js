@@ -77,17 +77,28 @@
    * @return {string} returne 53-bit hash of input
    * https://stackoverflow.com/a/52171480/13279341
    */
-   function cyrb53(str, seed = 0) {
-       const date = new Date();
-       let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-       for (let i = 0, ch; i < str.length; i++) {
-           ch = str.charCodeAt(i);
-           h1 = Math.imul(h1 ^ ch, 2654435761);
-           h2 = Math.imul(h2 ^ ch, 1597334677);
-       }
-       h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
-       h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
-       return date.getFullYear().toString() + date.getMonth().toString() + date.getDate().toString() + (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
+  function cyrb53(str, seed = 0) {
+    const date = new Date();
+    let h1 = 0xdeadbeef ^ seed;
+    let h2 = 0x41c6ce57 ^ seed;
+    for (let i = 0, ch; i < str.length; i++) {
+      ch = str.charCodeAt(i);
+      h1 = Math.imul(h1 ^ ch, 2654435761);
+      h2 = Math.imul(h2 ^ ch, 1597334677);
+    }
+    h1 =
+      Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
+      Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+    h2 =
+      Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
+      Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+    return (
+      date.getFullYear().toString() +
+      date.getMonth().toString() +
+      date.getDate().toString() +
+      (h2 >>> 0).toString(16).padStart(8, 0) +
+      (h1 >>> 0).toString(16).padStart(8, 0)
+    );
   }
 
   /**
@@ -192,9 +203,9 @@
    * @return {boolean} true if date or data is changed
    */
   function checkWayfarerDataChanged(page, hash) {
-    let storedHash = '';
+    let storedHash = "";
     if (localStorage["[WFP]_" + page]) {
-      storedHash =localStorage["[WFP]_" + page];
+      storedHash = localStorage["[WFP]_" + page];
     }
     if (storedHash != hash) {
       return true;
@@ -212,24 +223,23 @@
     const hash = cyrb53(JSON.stringify(data));
     if (checkWayfarerDataChanged(page, hash)) {
       fetch(WEBHOOK_URL + "?&p=" + page + "&t=" + WEBHOOK_TOKEN, {
-          method: "POST",
-          body: JSON.stringify(data),
+        method: "POST",
+        body: JSON.stringify(data),
       }).then(function (response) {
-          console.log(hash);
-          // skip visuel feedback by now
-          if (response.status == 222) {
-              localStorage["[WFP]_" + page] = hash;
-              setWayfarerFeedback(page, "green");
-          } else {
-              setWayfarerFeedback(page, "red");
-          }
-          console.log("[WFP]: " + response.status);
-          return response.text().then(function (text) {
-              console.log("[WFP]: " + text);
-          });
+        console.log(hash);
+        if (response.status == 222) {
+          localStorage["[WFP]_" + page] = hash;
+          setWayfarerFeedback(page, "green");
+        } else {
+          setWayfarerFeedback(page, "red");
+        }
+        console.log("[WFP]: " + response.status);
+        return response.text().then(function (text) {
+          console.log("[WFP]: " + text);
+        });
       });
     } else {
-        setWayfarerFeedback(page, "yellow");
+      setWayfarerFeedback(page, "yellow");
     }
   }
 
