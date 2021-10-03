@@ -31,30 +31,25 @@
   "use strict";
   /**
    * Overall script parts are placed here
+   * and define basic parameter here, we wan't to use everywhere
    */
-  console.log("[WFP]: init");
+  const DEBUG = true;
+  const logPrefix = "[WFP_" + GM_info.script.version + "]: ";
+  const WEBHOOK_URL = "https://wfp.cr4.me/api/v7/webhook.php";
+  const WEBHOOK_TOKEN = await getToken();
+  console.log(logPrefix + "DEBUG: " + DEBUG);
+  if (DEBUG) {
+    console.log(logPrefix + "initialized");
+  }
 
   /**
    * Recieve the stored token, async function needed due to GM_get/set
-   * @return {string} The stored token.
+   * @return {string} token - the stored token-value, if no token exist return -1
    */
   async function getToken() {
     const token = await GM.getValue("wayfapper-token", -1);
     return token;
   }
-
-  // define basic parameter that are used everywhere
-  const WEBHOOK_URL = "https://wfp.cr4.me/api/v7/webhook.php";
-  const WEBHOOK_TOKEN = await getToken();
-
-  /**
-   * Stop this script for a defined time
-   * @param {init} milliseconds time to wait
-   * @return {object} Promise if time has passed
-   *\/
-  function sleep(milliseconds) {
-    return new Promise((resolve) => setTimeout(resolve, milliseconds));
-  }*/
 
   /**
    * Check whether basic requirements for the token are met
@@ -102,6 +97,29 @@
   }
 
   /**
+   * Check, if we should allow another trasmission to wayfapper
+   * We only submit once a day if data isn't changed
+   * @param {string} page where the trasmissions came from for the check
+   * @param {string} hash cyrb53-hash of the data
+   * @return {boolean} true if date or data is changed
+   */
+  function checkWayfarerDataChanged(page, hash) {
+    let storedHash = "";
+    if (localStorage["[WFP]_" + page]) {
+      storedHash = localStorage["[WFP]_" + page];
+    }
+    if (DEBUG) {
+      console.log(logPrefix + "Stored Hash: " + storedHash);
+      console.log(logPrefix + "Hash: " + hash);
+    }
+    if (storedHash != hash) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  /**
    * Add some stylerules to wayfarer
    */
   function addWayfarerCss() {
@@ -146,6 +164,10 @@
    * @param {string} color the indication color, default red
    */
   function setWayfarerFeedback(sidebarItem = "s", color = "red") {
+    if (DEBUG) {
+      console.log(logPrefix + "Sidebar Item: " + sidebarItem);
+      console.log(logPrefix + "Color: " + color);
+    }
     let sRed = 0;
     let sGreen = 0;
     let sBlue = 0;
@@ -196,25 +218,6 @@
   }
 
   /**
-   * Check, if we should allow another trasmission to wayfapper
-   * We only submit once a day if data isn't changed
-   * @param {string} page where the trasmissions came from for the check
-   * @param {string} hash cyrb53-hash of the data
-   * @return {boolean} true if date or data is changed
-   */
-  function checkWayfarerDataChanged(page, hash) {
-    let storedHash = "";
-    if (localStorage["[WFP]_" + page]) {
-      storedHash = localStorage["[WFP]_" + page];
-    }
-    if (storedHash != hash) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /**
    * Change wayfarer sidebare items color as feedback
    * @param {string} data object with the informations
    * @param {string} page target to submit the data
@@ -226,16 +229,17 @@
         method: "POST",
         body: JSON.stringify(data),
       }).then(function (response) {
-        console.log(hash);
         if (response.status == 222) {
-          localStorage["[WFP]_" + page] = hash;
           setWayfarerFeedback(page, "green");
+          localStorage["[WFP]_" + page] = hash;
         } else {
           setWayfarerFeedback(page, "red");
         }
-        console.log("[WFP]: " + response.status);
+        console.log(logPrefix + response.status);
         return response.text().then(function (text) {
-          console.log("[WFP]: " + text);
+          if (DEBUG) {
+            console.log(logPrefix + "Response: " + text);
+          }
         });
       });
     } else {
@@ -303,32 +307,33 @@
 
   /**
    * Select what should happen, when wayfarer is detected
+   * https://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/27363569#27363569
    */
   function wayfarerMainFunction() {
     const origOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function () {
       this.addEventListener("load", async function () {
-        if (
-          this.responseURL ==
-          "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
-        ) {
-          const nominations = JSON.parse(this.responseText).result;
-          // console.log(data);
-          sendDataToWayfapper(nominations, "n");
-        }
-        if (
-          this.responseURL ==
-          "https://wayfarer.nianticlabs.com/api/v1/vault/profile"
-        ) {
-          const profile = JSON.parse(this.responseText).result;
-          // console.log(data);
-          sendDataToWayfapper(profile, "p");
-        }
-        if (
-          this.responseURL ==
-          "https://wayfarer.nianticlabs.com/api/v1/vault/settings"
-        ) {
-          window.setTimeout(addWayfarerSetting, 1000);
+        if (this.readyState === 4) {
+          if (
+            this.responseURL ==
+            "https://wayfarer.nianticlabs.com/api/v1/vault/manage"
+          ) {
+            const nominations = JSON.parse(this.responseText).result;
+            sendDataToWayfapper(nominations, "n");
+          }
+          if (
+            this.responseURL ==
+            "https://wayfarer.nianticlabs.com/api/v1/vault/profile"
+          ) {
+            const profile = JSON.parse(this.responseText).result;
+            sendDataToWayfapper(profile, "p");
+          }
+          if (
+            this.responseURL ==
+            "https://wayfarer.nianticlabs.com/api/v1/vault/settings"
+          ) {
+            window.setTimeout(addWayfarerSetting, 1000);
+          }
         }
       });
       origOpen.apply(this, arguments);
@@ -348,7 +353,7 @@
         .then(function (response) {
           if (!response.ok) {
             if (response.status >= 400 && response.status <= 499) {
-              console.error("[WFP] 4xx error, not retrying", response);
+              console.error(logPrefix + "4xx error, not retrying", response);
             }
           } else {
             inFlight = false;
@@ -356,7 +361,10 @@
           }
         })
         .catch(function (error) {
-          console.warn("[WFP] network error, retrying in 10 seconds", error);
+          console.warn(
+            logPrefix + "network error, retrying in 10 seconds",
+            error
+          );
           window.setTimeout(function () {
             sendIntelPortalData(data);
           }, 10000);
@@ -399,15 +407,15 @@
   }
 
   if (window.location.href.indexOf("wfp.cr4.me") > -1) {
-    console.log("[WFP]: Wayfapper recognized");
+    console.log(logPrefix + "Wayfapper recognized");
     // TODO add stuff here, later
   } else if (window.location.href.indexOf("wayfarer.nianticlabs.com") > -1) {
-    console.log("[WFP]: Wayfarer recognized");
+    console.log(logPrefix + "Wayfarer recognized");
     addWayfarerCss();
     addWayfarerVisibles();
     window.setTimeout(wayfarerMainFunction, 10);
   } else if (window.location.href.indexOf(".ingress.com/") > -1) {
-    console.log("[WFP]: Ingress Intel-Map recognized");
+    console.log(logPrefix + "Ingress Intel-Map recognized");
 
     const seenGuids = new Set();
     let portals = [];
@@ -522,7 +530,7 @@
                   checkIntelSend();
                 } catch (e) {
                   console.error(
-                    "[WFP]: Caught error in Intel XHR hook",
+                    logPrefix + "Caught error in Intel XHR hook",
                     apiFunc,
                     e,
                     this.responseText
@@ -537,7 +545,7 @@
       };
     })(XMLHttpRequest.prototype.open);
   } else {
-    console.log("[WFP]: pages mismatch");
-    console.log("[WFP]: " + window.location.href);
+    console.log(logPrefix + "pages mismatch");
+    console.log(logPrefix + window.location.href);
   }
 })();
