@@ -314,37 +314,43 @@
     XMLHttpRequest.prototype.open = function () {
       this.addEventListener("load", async function () {
         if (this.readyState === 4) {
-              switch (this.responseURL) {
-                // Showcase-Page, submit showcase data
-                case "https://wayfarer.nianticlabs.com/api/v1/vault/properties":
-                    //TODO: Store data and submit parts of this later
-                    //sendDataToWayfapper(JSON.parse(this.responseText).result, "sc");
-                  break;
-                // Showcase-Page, submit showcase data
-                case "https://wayfarer.nianticlabs.com/api/v1/vault/home":
-                    //TODO: Submit showcase-POIs
-                    sendDataToWayfapper(JSON.parse(this.responseText).result.showcase, "sc");
-                  break;
-                // Review-Page, submit review data
-                case "https://wayfarer.nianticlabs.com/api/v1/vault/review":
-                    //TODO: Submit other POIs and
-                    //sendDataToWayfapper(JSON.parse(this.responseText).result, "rv");
-                    //submit existing pois
-                    sendDataToWayfapper(JSON.parse(this.responseText).result.nearbyPortals, "sc");
-                  break;
-                // Nominations-Page, submit nominations data
-                case "https://wayfarer.nianticlabs.com/api/v1/vault/manage":
-                    sendDataToWayfapper(JSON.parse(this.responseText).result, "n");
-                  break;
-                // Profile-Page, submit profile data
-                case "https://wayfarer.nianticlabs.com/api/v1/vault/profile":
-                  sendDataToWayfapper(JSON.parse(this.responseText).result, "p");
-                  break;
-                // Settings-Page, add settings
-                case "https://wayfarer.nianticlabs.com/api/v1/vault/settings":
-                  window.setTimeout(addWayfarerSetting, 1000);
-                  break;
-              }
+          switch (this.responseURL) {
+            // Showcase-Page, submit showcase data
+            case "https://wayfarer.nianticlabs.com/api/v1/vault/properties":
+              // TODO: Store data and submit parts of this later
+              // sendDataToWayfapper(JSON.parse(this.responseText).result, "sc");
+              break;
+            // Showcase-Page, submit showcase data
+            case "https://wayfarer.nianticlabs.com/api/v1/vault/home":
+              // TODO: Submit showcase-POIs
+              sendDataToWayfapper(
+                JSON.parse(this.responseText).result.showcase,
+                "sc"
+              );
+              break;
+            // Review-Page, submit review data
+            case "https://wayfarer.nianticlabs.com/api/v1/vault/review":
+              // TODO: Submit other POIs and
+              // sendDataToWayfapper(JSON.parse(this.responseText).result, "rv");
+              // submit existing pois
+              sendDataToWayfapper(
+                JSON.parse(this.responseText).result.nearbyPortals,
+                "sc"
+              );
+              break;
+            // Nominations-Page, submit nominations data
+            case "https://wayfarer.nianticlabs.com/api/v1/vault/manage":
+              sendDataToWayfapper(JSON.parse(this.responseText).result, "n");
+              break;
+            // Profile-Page, submit profile data
+            case "https://wayfarer.nianticlabs.com/api/v1/vault/profile":
+              sendDataToWayfapper(JSON.parse(this.responseText).result, "p");
+              break;
+            // Settings-Page, add settings
+            case "https://wayfarer.nianticlabs.com/api/v1/vault/settings":
+              window.setTimeout(addWayfarerSetting, 1000);
+              break;
+          }
         }
       });
       origOpen.apply(this, arguments);
