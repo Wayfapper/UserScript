@@ -26,6 +26,7 @@
 // @grant           GM_getValue
 // @grant           GM_setValue
 // ==/UserScript==
+/* eslint camelcase: ["error", {allow: ["^GM_info"]}] */
 
 (async function () {
   "use strict";
