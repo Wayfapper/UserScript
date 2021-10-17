@@ -74,27 +74,29 @@
    * https://stackoverflow.com/a/52171480/13279341
    */
   function cyrb53(str, seed = 0) {
-    const date = new Date();
-    let h1 = 0xdeadbeef ^ seed;
-    let h2 = 0x41c6ce57 ^ seed;
-    for (let i = 0, ch; i < str.length; i++) {
-      ch = str.charCodeAt(i);
-      h1 = Math.imul(h1 ^ ch, 2654435761);
-      h2 = Math.imul(h2 ^ ch, 1597334677);
+    if (data) {
+      const date = new Date();
+      let h1 = 0xdeadbeef ^ seed;
+      let h2 = 0x41c6ce57 ^ seed;
+      for (let i = 0, ch; i < str.length; i++) {
+        ch = str.charCodeAt(i);
+        h1 = Math.imul(h1 ^ ch, 2654435761);
+        h2 = Math.imul(h2 ^ ch, 1597334677);
+      }
+      h1 =
+        Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
+        Math.imul(h2 ^ (h2 >>> 13), 3266489909);
+      h2 =
+        Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
+        Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      return (
+        date.getFullYear().toString() +
+        date.getMonth().toString() +
+        date.getDate().toString() +
+        (h2 >>> 0).toString(16).padStart(8, 0) +
+        (h1 >>> 0).toString(16).padStart(8, 0)
+      );
     }
-    h1 =
-      Math.imul(h1 ^ (h1 >>> 16), 2246822507) ^
-      Math.imul(h2 ^ (h2 >>> 13), 3266489909);
-    h2 =
-      Math.imul(h2 ^ (h2 >>> 16), 2246822507) ^
-      Math.imul(h1 ^ (h1 >>> 13), 3266489909);
-    return (
-      date.getFullYear().toString() +
-      date.getMonth().toString() +
-      date.getDate().toString() +
-      (h2 >>> 0).toString(16).padStart(8, 0) +
-      (h1 >>> 0).toString(16).padStart(8, 0)
-    );
   }
 
   /**
@@ -334,10 +336,12 @@
               // TODO: Submit other POIs and
               // sendDataToWayfapper(JSON.parse(this.responseText).result, "rv");
               // submit existing pois
-              sendDataToWayfapper(
-                JSON.parse(this.responseText).result.nearbyPortals,
-                "sc"
-              );
+              if (this.responseText.type == "NEW") {
+                sendDataToWayfapper(
+                  JSON.parse(this.responseText).result.nearbyPortals,
+                  "sc"
+                );
+              }
               break;
             // Nominations-Page, submit nominations data
             case "https://wayfarer.nianticlabs.com/api/v1/vault/manage":
