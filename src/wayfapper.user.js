@@ -74,7 +74,7 @@
    * https://stackoverflow.com/a/52171480/13279341
    */
   function cyrb53(str, seed = 0) {
-    if (typeof str !== 'undefined') {
+    if (typeof str !== "undefined") {
       const date = new Date();
       let h1 = 0xdeadbeef ^ seed;
       let h2 = 0x41c6ce57 ^ seed;
@@ -339,7 +339,11 @@
               // TODO: Submit other POIs and
               // sendDataToWayfapper(JSON.parse(this.responseText).result, "rv");
               // submit existing pois
-              if ((JSON.parse(this.responseText).result != "api.review.post.accepted") && (JSON.parse(this.responseText).result.type = "NEW")) {
+              if (
+                JSON.parse(this.responseText).result !=
+                  "api.review.post.accepted" &&
+                JSON.parse(this.responseText).result.type == "NEW"
+              ) {
                 sendDataToWayfapper(
                   JSON.parse(this.responseText).result.nearbyPortals,
                   "sc"
