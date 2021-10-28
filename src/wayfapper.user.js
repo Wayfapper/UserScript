@@ -74,7 +74,7 @@
    * https://stackoverflow.com/a/52171480/13279341
    */
   function cyrb53(str, seed = 0) {
-    if (data) {
+    if (typeof str !== 'undefined') {
       const date = new Date();
       let h1 = 0xdeadbeef ^ seed;
       let h2 = 0x41c6ce57 ^ seed;
@@ -96,6 +96,8 @@
         (h2 >>> 0).toString(16).padStart(8, 0) +
         (h1 >>> 0).toString(16).padStart(8, 0)
       );
+    } else {
+      return false;
     }
   }
 
@@ -227,7 +229,8 @@
    */
   function sendDataToWayfapper(data, page = "s") {
     const hash = cyrb53(JSON.stringify(data));
-    if (checkWayfarerDataChanged(page, hash)) {
+    window.setTimeout(addWayfarerVisibles, 100);
+    if (hash && checkWayfarerDataChanged(page, hash)) {
       fetch(WEBHOOK_URL + "?&p=" + page + "&t=" + WEBHOOK_TOKEN, {
         method: "POST",
         body: JSON.stringify(data),
@@ -336,7 +339,7 @@
               // TODO: Submit other POIs and
               // sendDataToWayfapper(JSON.parse(this.responseText).result, "rv");
               // submit existing pois
-              if (this.responseText.type == "NEW") {
+              if ((JSON.parse(this.responseText).result != "api.review.post.accepted") && (JSON.parse(this.responseText).result.type = "NEW")) {
                 sendDataToWayfapper(
                   JSON.parse(this.responseText).result.nearbyPortals,
                   "sc"
