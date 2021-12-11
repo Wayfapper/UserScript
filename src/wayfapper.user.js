@@ -116,6 +116,7 @@
     if (DEBUG) {
       console.log(logPrefix + "Stored Hash: " + storedHash);
       console.log(logPrefix + "Hash: " + hash);
+      return true;
     }
     if (storedHash != hash) {
       return true;
