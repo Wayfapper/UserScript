@@ -36,7 +36,7 @@
    */
   const DEBUG = true;
   const logPrefix = "[WFP_" + GM_info.script.version + "]: ";
-  const WEBHOOK_URL = "https://wfp.cr4.me/api/v2/webhook.php";
+  const WEBHOOK_URL = "https://wfp.cr4.me/api/v3/webhook.php";
   const WEBHOOK_TOKEN = await getToken();
   console.log(logPrefix + "DEBUG: " + DEBUG);
   if (DEBUG) {
@@ -116,6 +116,7 @@
     if (DEBUG) {
       console.log(logPrefix + "Stored Hash: " + storedHash);
       console.log(logPrefix + "Hash: " + hash);
+      return true;
     }
     if (storedHash != hash) {
       return true;
