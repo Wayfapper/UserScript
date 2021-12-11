@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.2.15
+// @version         0.2.16
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
@@ -34,7 +34,7 @@
    * Overall script parts are placed here
    * and define basic parameter here, we wan't to use everywhere
    */
-  const DEBUG = true;
+  const DEBUG = false;
   const logPrefix = "[WFP_" + GM_info.script.version + "]: ";
   const WEBHOOK_URL = "https://wfp.cr4.me/api/v2/webhook.php";
   const WEBHOOK_TOKEN = await getToken();
