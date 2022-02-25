@@ -9,7 +9,7 @@ jobs:
     name: Lint via Node {{ matrix.node-version }}
     steps:
       - uses: actions/checkout@master
-      - uses: actions/setup-node@v2.5.1
+      - uses: actions/setup-node@v3.0.0
         with:
           node-version: ${{ matrix.node-version }}
       - name: Pull dependencies and lint
