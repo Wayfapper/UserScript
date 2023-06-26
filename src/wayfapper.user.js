@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.2.17
+// @version         0.3.0
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
@@ -14,12 +14,14 @@
 // @include         https://ingress.com/intel*
 // @include         https://intel.ingress.com/intel*
 // @include         https://intel.ingress.com/*
+// @include         https://lightship.dev/*
 // @match           https://wfp.cr4.me/
 // @match           https://wayfarer.nianticlabs.com/*
 // @match           https://www.ingress.com/intel*
 // @match           https://ingress.com/intel*
 // @match           https://intel.ingress.com/intel*
 // @match           https://intel.ingress.com/*
+// @match           https://lightship.dev/*
 // @icon            https://wfp.cr4.me/images/wayfapper_icon.svg
 // @grant           GM.getValue
 // @grant           GM.setValue
