@@ -2,7 +2,7 @@
 // @id              wayfapper
 // @name            Wayfapper
 // @category        Misc
-// @version         0.2.17
+// @version         0.3.0
 // @description     WAYFArer + mAPPER = Wayfapper
 // @namespace       https://wfp.cr4.me/
 // @downloadURL     https://wfp.cr4.me/dl/wayfapper.user.js
@@ -14,12 +14,14 @@
 // @include         https://ingress.com/intel*
 // @include         https://intel.ingress.com/intel*
 // @include         https://intel.ingress.com/*
+// @include         https://lightship.dev/*
 // @match           https://wfp.cr4.me/
 // @match           https://wayfarer.nianticlabs.com/*
 // @match           https://www.ingress.com/intel*
 // @match           https://ingress.com/intel*
 // @match           https://intel.ingress.com/intel*
 // @match           https://intel.ingress.com/*
+// @match           https://lightship.dev/*
 // @icon            https://wfp.cr4.me/images/wayfapper_icon.svg
 // @grant           GM.getValue
 // @grant           GM.setValue
@@ -36,7 +38,7 @@
    */
   const DEBUG = true;
   const logPrefix = "[WFP_" + GM_info.script.version + "]: ";
-  const WEBHOOK_URL = "https://wfp.cr4.me/api/v3/webhook.php";
+  const WEBHOOK_URL = "https://wfp.cr4.me/api/v10/webhook.php";
   const WEBHOOK_TOKEN = await getToken();
   console.log(logPrefix + "DEBUG: " + DEBUG);
   if (DEBUG) {
@@ -130,13 +132,13 @@
    */
   function addWayfarerCss() {
     const css = `
-      .badge {
-        position: absolute;
-        padding: 5px 10px !important;
-        border-radius: 50%;
-        background-color: rgba(0, 0, 0, 0.5);
-        color: white;
-      }`;
+    .badge {
+      position: absolute;
+      padding: 5px 10px !important;
+      border-radius: 50%;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+    }`;
     const style = document.createElement("style");
     style.type = "text/css";
     style.innerHTML = css;
@@ -317,10 +319,12 @@
    * https://stackoverflow.com/questions/5202296/add-a-hook-to-all-ajax-requests-on-a-page/27363569#27363569
    */
   function wayfarerMainFunction() {
+    console.log(logPrefix);
     const origOpen = XMLHttpRequest.prototype.open;
     XMLHttpRequest.prototype.open = function () {
       this.addEventListener("load", async function () {
         if (this.readyState === 4) {
+          console.log(logPrefix + this.responseURL);
           switch (this.responseURL) {
             // Showcase-Page, submit showcase data
             case "https://wayfarer.nianticlabs.com/api/v1/vault/properties":
@@ -370,6 +374,52 @@
     };
   }
 
+  /**
+   * Intercept fetch() API requests and submit some data elsewhere
+   * https://stackoverflow.com/a/64961272
+   */
+  function lightshipMainFunction() {
+    const { fetch: origFetch } = unsafeWindow;
+    unsafeWindow.fetch = async (...args) => {
+      const response = await origFetch(...args);
+
+      if (
+        response.type === "basic" &&
+        response.url.startsWith("https://lightship.dev/v1/vps/getPoisInRadius/")
+      ) {
+        /* work with the cloned response in a separate promise
+              chain -- could use the same chain with `await`. */
+        if (typeof response.body === "object") {
+          response
+            .clone()
+            .json()
+            .then((body) => sendLightshipData(body));
+        }
+      }
+      /* the original response can be resolved unmodified: */
+      return response;
+    };
+  }
+
+  /**
+   * Submit data from the lightship
+   * @param {object} body object that contains the poi infos
+   */
+  function sendLightshipData(body) {
+    if (checkWebhookToken(WEBHOOK_TOKEN)) {
+      fetch(WEBHOOK_URL + "?&p=l&t=" + WEBHOOK_TOKEN, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }).then(function (response) {
+        console.log(logPrefix + response.status);
+        return response.text().then(function (text) {
+          if (DEBUG) {
+            console.log(logPrefix + "Response: " + text);
+          }
+        });
+      });
+    }
+  }
   /**
    * Submit data from the intel map
    * @param {object} data object that contains the portal infos
@@ -444,6 +494,9 @@
     addWayfarerCss();
     addWayfarerVisibles();
     window.setTimeout(wayfarerMainFunction, 10);
+  } else if (window.location.href.indexOf("lightship.dev") > -1) {
+    console.log(logPrefix + "Lightship recognized");
+    window.setTimeout(lightshipMainFunction, 1000);
   } else if (window.location.href.indexOf(".ingress.com/") > -1) {
     console.log(logPrefix + "Ingress Intel-Map recognized");
 
