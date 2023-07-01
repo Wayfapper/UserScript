@@ -375,9 +375,9 @@
   }
 
   /**
- * Intercept fetch() API requests and submit some data elsewhere
- * https://stackoverflow.com/a/64961272
- */
+   * Intercept fetch() API requests and submit some data elsewhere
+   * https://stackoverflow.com/a/64961272
+   */
   function lightshipMainFunction() {
     const { fetch: origFetch } = unsafeWindow;
     unsafeWindow.fetch = async (...args) => {
