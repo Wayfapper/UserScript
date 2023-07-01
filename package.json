@@ -1,6 +1,6 @@
 {
   "name": "wayfapper",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "WAYFArer + mAPPER = Wayfapper",
   "homepage": "https://wfp.cr4.me/",
   "main": "src/wayfapper.user.js",
