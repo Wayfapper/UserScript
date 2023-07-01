@@ -374,6 +374,10 @@
     };
   }
 
+  /**
+ * Intercept fetch() API requests and submit some data elsewhere
+ * https://stackoverflow.com/a/64961272
+ */
   function lightshipMainFunction() {
     const { fetch: origFetch } = unsafeWindow;
     unsafeWindow.fetch = async (...args) => {
@@ -396,9 +400,10 @@
       return response;
     };
   }
+
   /**
    * Submit data from the lightship
-   * @param {object} data object that contains the poi infos
+   * @param {object} body object that contains the poi infos
    */
   function sendLightshipData(body) {
     if (checkWebhookToken(WEBHOOK_TOKEN)) {
