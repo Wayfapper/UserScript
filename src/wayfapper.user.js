@@ -336,7 +336,7 @@
               // TODO: Submit showcase-POIs
               sendDataToWayfapper(
                 JSON.parse(this.responseText).result.showcase,
-                "sc"
+                "sc",
               );
               break;
             // Review-Page, submit review data
@@ -351,7 +351,7 @@
               ) {
                 sendDataToWayfapper(
                   JSON.parse(this.responseText).result.nearbyPortals,
-                  "sc"
+                  "sc",
                 );
               }
               break;
@@ -443,7 +443,7 @@
         .catch(function (error) {
           console.warn(
             logPrefix + "network error, retrying in 10 seconds",
-            error
+            error,
           );
           window.setTimeout(function () {
             sendIntelPortalData(data);
@@ -567,7 +567,7 @@
                         }
                         portals.push(new IPortal(guid, data.result));
                         sendIntelPortalData(
-                          JSON.stringify(new IPortal(guid, data.result))
+                          JSON.stringify(new IPortal(guid, data.result)),
                         );
                       }
                       break;
@@ -587,23 +587,23 @@
                           ) {
                             continue;
                           }
-                          data.result.map[tile].gameEntities.forEach(function (
-                            ent
-                          ) {
-                            switch (
-                              // Entity type
-                              ent[2][0]
-                            ) {
-                              case "p": // Portal
-                                const guid = ent[0];
-                                if (!seenGuids.has(guid)) {
-                                  seenGuids.clear();
-                                  seenGuids.add(guid);
-                                  portals.push(new IPortal(guid, ent[2]));
-                                }
-                                break;
-                            }
-                          });
+                          data.result.map[tile].gameEntities.forEach(
+                            function (ent) {
+                              switch (
+                                // Entity type
+                                ent[2][0]
+                              ) {
+                                case "p": // Portal
+                                  const guid = ent[0];
+                                  if (!seenGuids.has(guid)) {
+                                    seenGuids.clear();
+                                    seenGuids.add(guid);
+                                    portals.push(new IPortal(guid, ent[2]));
+                                  }
+                                  break;
+                              }
+                            },
+                          );
                         }
                       }
                       break;
@@ -616,12 +616,12 @@
                     logPrefix + "Caught error in Intel XHR hook",
                     apiFunc,
                     e,
-                    this.responseText
+                    this.responseText,
                   );
                 }
               }
             },
-            false
+            false,
           );
         }
         open.apply(this, arguments);
