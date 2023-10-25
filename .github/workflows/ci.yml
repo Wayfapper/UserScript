@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 13.x, 14.x]
+        node-version: [14.x, 16.x, 18.x]
     name: Lint via Node {{ matrix.node-version }}
     steps:
       - uses: actions/checkout@v4.1.1
