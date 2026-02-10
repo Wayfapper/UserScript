@@ -8,7 +8,7 @@ jobs:
         node-version: [14.x, 16.x, 18.x]
     name: Lint via Node {{ matrix.node-version }}
     steps:
-      - uses: actions/checkout@v4.1.1
+      - uses: actions/checkout@v6.0.2
       - uses: actions/setup-node@v4.0.1
         with:
           node-version: ${{ matrix.node-version }}
